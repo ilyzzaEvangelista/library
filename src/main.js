@@ -6,6 +6,6 @@ import "vuetify/dist/vuetify.min.css"; // Import Vuetify styles
 Vue.use(Vuetify);
 
 new Vue({
-  vuetify: new Vuetify(), // Register Vuetify
+  vuetify: new Vuetify(), // Register Vuetify properly
   render: (h) => h(App),
 }).$mount("#app");
