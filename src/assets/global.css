@@ -1,0 +1,14 @@
+#app {
+    font-family: "Arial", sans-serif;
+    margin: 20px;
+    color: #333;
+}
+
+.text-capitalized {
+    text-transform: capitalize;
+}
+
+.align-center {
+    float: center; /* Add this line */
+    display: center;
+}
