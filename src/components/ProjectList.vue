@@ -132,11 +132,11 @@
       font-size: 1.8rem;
       font-weight: bold;
       margin-top: 10px;
-      color: #F06292;
+      color: #000000;
   }
   .user-email {
       font-size: 1rem;
-      color: #f48fb1;
+      color: #E91E63;
   }
   .divider {
       margin: 20px 0;

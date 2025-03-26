@@ -58,7 +58,7 @@
     }
 
     .nav-btn {
-        color: #000000 !important;
+        color: #fcfcfc !important;
         text-transform: uppercase;
         font-weight: 500;
         transition: 0.3s;
@@ -67,6 +67,6 @@
     }
 
     .nav-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(32, 32, 32, 0.2);
     }
 </style>
