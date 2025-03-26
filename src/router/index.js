@@ -4,7 +4,7 @@ import CompCreate from '../components/CompCreate.vue';
 import ContactMe from '../components/ContactMe.vue';
 import GoodreadsComponent from '../components/GoodreadsComponent.vue';
 import ProjectList from '../components/ProjectList.vue';
-import SideBar from '../components/SideBar.vue';
+import SideBar from '../components/CertificatesList.vue';
 
 Vue.use(VueRouter);
 
