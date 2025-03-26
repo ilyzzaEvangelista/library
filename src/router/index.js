@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import CompCreate from '../components/CompCreate.vue';
+import CompCreate from '../components/good-reads/components/CompCreate.vue';
 import ContactMe from '../components/ContactMe.vue';
-import GoodreadsComponent from '../components/GoodreadsComponent.vue';
+import GoodreadsComponent from '../components/good-reads/GoodreadsComponent.vue';
 import ProjectList from '../components/ProjectList.vue';
 import SideBar from '../components/CertificatesList.vue';
 
