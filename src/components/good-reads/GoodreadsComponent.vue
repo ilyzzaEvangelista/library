@@ -1,79 +1,83 @@
 <template>
     <div id="app">
-        <!-- <v-app> -->
-            <header>
-                <h1>My Literary Journey</h1>
-                <v-text-field v-model="searchTerm" label="Search Books" append-icon="mdi-magnify" single-line hide-details outlined dense />
-            </header>
+        <header>
+            <h1>My Literary Journey</h1>
+        </header>
 
-            <section>
-                <CompCreate :book="selectedBook" :mode="mode" @book-added="handleBookAdded" @book-updated="handleBookUpdated" />
-            </section>
+        <section>
+            <v-row>
+                <v-col cols="4">
+                    <v-text-field v-model="searchTerm" class="mb-5" label="Search Books" append-icon="mdi-magnify" single-line hide-details outlined dense />
+                </v-col>
+                <v-col cols="8">
+                    <CompCreate :book="selectedBook" @book-added="handleBookAdded" @book-updated="handleBookUpdated" />
+                </v-col>
+            </v-row>
+        </section>
 
-            <section class="book-list">
-                <v-data-table :headers="headers" :items="paginatedBooks" item-value="title" class="elevation-1" hide-default-footer>
-                    <template v-slot:[`item.image`]="{ item }">
-                        <v-btn class="text-capitalized" small v-if="item.image" text @click="viewImage(item.image)">
-                            View Image
+        <section class="book-list">
+            <v-data-table :headers="headers" :items="paginatedBooks" :loading="loading" item-value="title" class="elevation-1" hide-default-footer>
+                <template v-slot:[`item.image`]="{ item }">
+                    <v-btn class="text-capitalized" small v-if="item.image" text @click="viewImage(item.image)">
+                        View Image
+                    </v-btn>
+                </template>
+
+                <template v-slot:[`item.title`]="{ item }"> <strong>{{ item.title }}</strong> by {{ item.author }} </template>
+
+                <template v-slot:[`item.description`]="{ item }">
+                    <span class="truncate-text" :title="item.description">
+                        {{ item.description }}
+                    </span>
+                </template>
+
+                <template v-slot:[`item.actions`]="{ item }">
+                    <div class="d-flex justify-center align-center">
+                        <CompCreate :book="item" @book-added="handleBookAdded" @book-updated="handleBookUpdated" />
+                        <v-btn small color="#B71C1C" class="mx-2 text-capitalized" style="color: white;" @click="removeBook(item)">
+                            {{ formattedLabels.delete }}
                         </v-btn>
-                    </template>
+                    </div>
+                </template>
+            </v-data-table>
 
-                    <template v-slot:[`item.title`]="{ item }"> <strong>{{ item.title }}</strong> by {{ item.author }} </template>
+            <v-pagination v-model="page" :length="pageCount" color="#1A237E" class="mt-4"></v-pagination>
 
-                    <template v-slot:[`item.description`]="{ item }">
-                        <span class="truncate-text" :title="item.description">
-                            {{ item.description }}
-                        </span>
-                    </template>
-
-                    <template v-slot:[`item.actions`]="{ item }">
-                        <div class="d-flex align-center">
-                            <CompCreate :book="item" :mode="mode" @book-added="handleBookAdded" @book-updated="handleBookUpdated" />
-                            <v-btn small color="#B71C1C" class="mx-2 text-capitalized" style="color: white;" @click="removeBook(item)">
-                                {{ formattedLabels.delete }}
-                            </v-btn>
-                        </div>
-                    </template>
-                </v-data-table>
-
-                <v-pagination v-model="page" :length="pageCount" color="#1A237E" class="mt-4"></v-pagination>
-
-                <v-dialog v-model="imageDialog" max-width="400px">
-                    <v-card>
-                        <v-card-title class="pa-0">
-                            <v-toolbar class="elevation-0">
-                                <v-spacer></v-spacer>
-                                <v-card-title>Book Cover</v-card-title>
-                                <v-spacer></v-spacer>
-                                <v-toolbar-items>
-                                    <v-btn icon @click="imageDialog = false">
-                                        <v-icon>mdi-close</v-icon>
-                                    </v-btn>
-                                </v-toolbar-items>
-                            </v-toolbar>
-                        </v-card-title>
-                        <hr />
-                        {{ selectedImage }}
-                        <v-card-text class="text-center mt-5">
-                            <v-img :src="selectedImage" max-width="100%"></v-img>
-                        </v-card-text>
-                    </v-card>
-                </v-dialog>
-            </section>
-        <!-- </v-app> -->
+            <v-dialog v-model="imageDialog" max-width="400px">
+                <v-card>
+                    <v-card-title class="pa-0">
+                        <v-toolbar class="elevation-0">
+                            <v-spacer></v-spacer>
+                            <v-card-title>Book Cover</v-card-title>
+                            <v-spacer></v-spacer>
+                            <v-toolbar-items>
+                                <v-btn icon @click="imageDialog = false">
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                            </v-toolbar-items>
+                        </v-toolbar>
+                    </v-card-title>
+                    <hr />
+                    <v-card-text class="text-center mt-5">
+                        <v-img :src="selectedImage" max-width="100%"></v-img>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+        </section>
     </div>
 </template>
 
 <script>
-    import CompCreate from "./CompCreate";
+    import CompCreate from "./components/CompCreate.vue";
     export default {
         components: {
             CompCreate,
         },
         data() {
             return {
-                page: 1, 
-                itemsPerPage: 5, 
+                loading: false,
+                page: 1,
+                itemsPerPage: 5,
                 searchTerm: "",
                 selectedImage: null,
                 imageDialog: false,
@@ -174,19 +178,27 @@
             },
 
             addBook() {
-                this.books.push({ ...this.newBook });
-                this.newBook.title = "";
-                this.newBook.author = "";
-                this.newBook.description = "";
-                this.newBook.image = null;
+                this.loading = true; // Start loading
+                setTimeout(() => {
+                    this.books.push({ ...this.newBook });
+                    this.newBook.title = "";
+                    this.newBook.author = "";
+                    this.newBook.description = "";
+                    this.newBook.image = null;
+                    this.loading = false; // Stop loading after 3 seconds
+                }, 3000); // 3-second delay
             },
 
             handleBookUpdated(updatedBook) {
-                const index = this.books.findIndex((book) => book.id === updatedBook.id);
-                if (index !== -1) {
-                    this.books.splice(index, 1, updatedBook);
-                }
-                this.selectedBook = null;
+                this.loading = true; // Start loading
+                setTimeout(() => {
+                    const index = this.books.findIndex((book) => book.id === updatedBook.id);
+                    if (index !== -1) {
+                        this.books.splice(index, 1, updatedBook);
+                    }
+                    this.selectedBook = null;
+                    this.loading = false; // Stop loading after 3 seconds
+                }, 3000); // 3-second delay
             },
 
             editBook(index) {
@@ -217,9 +229,13 @@
                     };
                 }
             },
-
             handleBookAdded(bookData) {
-                this.books.push(bookData);
+                this.loading = true; // Start loading
+                setTimeout(() => {
+                    // Add the new book to the beginning of the array
+                    this.books.unshift(bookData);
+                    this.loading = false; // Stop loading after 3 seconds
+                }, 3000); // 3-second delay
             },
         },
     };
@@ -237,10 +253,10 @@
     }
 
     .truncate-text {
-        white-space: nowrap; /* Prevent text from wrapping */
-        overflow: hidden; /* Hide overflow */
-        text-overflow: ellipsis; /* Show "..." for overflow text */
-        max-width: 150px; /* Adjust width as needed */
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        max-width: 150px;
         display: inline-block;
     }
 
