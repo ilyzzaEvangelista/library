@@ -13,16 +13,17 @@
 
                     <v-row v-if="!selectedProject" class="ml-5">
                         <v-col v-for="project in projects" :key="project.id" cols="12" md="4">
-                            <v-card @click="selectProject(project)">
-                                <v-img :src="project.image" class="project-image" contain height="200px" />
+                            <v-card @click="selectProject(project)" class="full-card">
+                                <v-img :src="project.image" class="project-image mt-10" contain elevation-1 />
                                 <v-card-title class="project-title">{{ project.name }}</v-card-title>
                                 <v-card-subtitle class="project-desc">{{ project.description }}</v-card-subtitle>
                             </v-card>
-                        </v-col>
+                        </v-col>                        
                     </v-row>
 
                     <GoodreadsComponent v-if="selectedProject?.name === 'Library'" />
                     <VueDashboard v-if="selectedProject?.name === 'Dashboard'" />
+                    <DentalMain v-if="selectedProject?.name === 'Appointment System'" />
                 </div>
             </div>
         </v-container>
@@ -32,7 +33,7 @@
 <script>
     import GoodreadsComponent from "./good-reads/GoodreadsComponent.vue";
     import VueDashboard from "./dashboard/VueDashboard.vue";
-
+    import DentalMain from "./dental/DentalMain.vue";
     export default {
         props: {
             setSelectedProject: Function, // Function passed from App.vue
@@ -40,6 +41,7 @@
         components: {
             GoodreadsComponent,
             VueDashboard,
+            DentalMain
         },
         data() {
             return {
@@ -48,13 +50,19 @@
                         id: 1,
                         name: "Library",
                         description: "A library built with Vue and Vuetify.",
-                        image: "https://img.freepik.com/free-vector/text-books-library-isolated-icon_24877-83372.jpg",
+                        image: "https://cdn-icons-png.flaticon.com/512/10278/10278270.png",
                     },
                     {
                         id: 2,
                         name: "Dashboard",
                         description: "A dashboard built with Vue and Vuetify.",
                         image: "https://static.vecteezy.com/system/resources/previews/048/734/931/non_2x/dashboard-colored-outline-icon-icon-related-to-overview-data-analytics-elements-illustration-vector.jpg",
+                    },
+                    {
+                        id: 3,
+                        name: "Appointment System",
+                        description: "A dental appointment system built with Vue and Vuetify.",
+                        image: "https://cdn-icons-png.flaticon.com/512/10634/10634599.png",
                     },
                 ],
                 selectedProject: null,
@@ -112,11 +120,12 @@
     }
     .project-image {
         width: 100%;
-        max-height: 200px;
+        max-height: 150px;
         object-fit: cover; 
         display: flex;
         justify-content: center;
         align-items: center;
+        margin-top: 10px;
     }
 
     .project-title {
@@ -130,5 +139,16 @@
     .project-desc {
         font-size: 0.9rem;
         color: #555;
+    }
+
+    .full-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }    
+
+    .full-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.1);
     }
 </style>
