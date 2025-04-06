@@ -1,5 +1,6 @@
 <template>
     <v-app>
+        <BookedAppointments v-if="modal" :modal="modal" v-on:btnModal="btnModal" />
         <!-- Navigation Bar -->
         <v-app-bar app color="indigo" dark>
             <v-toolbar-title>URMAZA DENTAL CLINIC</v-toolbar-title>
@@ -17,8 +18,8 @@
                 <v-card class="pa-5" flat>
                     <v-row>
                         <v-col cols="12" md="6" class="d-flex flex-column justify-center">
-                            <v-img :src="logo2" alt="Dental Clinic Image" height="500px" class="mx-auto mb-4"></v-img>
-                            <ApprointmentForm />
+                            <v-img :src="banner" alt="Dental Clinic Image" height="500px" class="mx-auto mb-4"></v-img>
+                            <v-btn color="indigo" @click="openDialog" class="white--text text-capitalized floating-btn">Book an appointment</v-btn>
                         </v-col>
                         <v-col cols="12" md="6">
                             <v-img :src="logo" alt="Dental Clinic Image" height="220px" class="mx-auto mt-10 mb-4"></v-img>
@@ -58,7 +59,7 @@
                             <p>{{ desc }}</p>
                         </v-col>
                         <v-col cols="12" md="6">
-                            <v-img :src="logo2" alt="About Us Image"></v-img>
+                            <v-img :src="banner" alt="About Us Image"></v-img>
                         </v-col>
                     </v-row>
                 </v-card>
@@ -75,10 +76,10 @@
                 </v-card-title>
                 <v-card-text>
                     <v-form v-model="formValid" @submit.prevent="submitForm">
-                        <v-text-field v-model="name" label="Your Name" outlined dense required :rules="[nameRules]"></v-text-field>
-                        <v-text-field v-model="email" label="Your Email" outlined dense required :rules="[emailRules]"></v-text-field>
-                        <v-textarea v-model="message" label="Your Message" outlined dense required :rules="[messageRules]"></v-textarea>
-                        <v-btn :disabled="!formValid" color="indigo" type="submit"  class="white--text">
+                        <v-text-field v-model="name" label="Your Name" outlined dense required :rules="nameRules"></v-text-field>
+                        <v-text-field v-model="email" label="Your Email" outlined dense required :rules="emailRules"></v-text-field>
+                        <v-textarea v-model="message" label="Your Message" outlined dense required :rules="messageRules"></v-textarea>
+                        <v-btn :disabled="!formValid" color="indigo" type="submit" class="white--text">
                             Submit
                         </v-btn>
                     </v-form>
@@ -110,20 +111,20 @@
 
 <script>
     import ServicesList from "./components/ServicesList.vue";
-    import ApprointmentForm from "./components/ApproinmentForm.vue";
+    import BookedAppointments from "./components/BookedAppointments.vue";
     import AppointmentDate from "./components/AppointmentDate.vue";
     export default {
         components: {
             ServicesList,
-            ApprointmentForm,
-            AppointmentDate
+            BookedAppointments,
+            AppointmentDate,
         },
         data() {
             return {
+                banner:
+                    "https://scontent.fmnl37-1.fna.fbcdn.net/v/t39.30808-6/225717845_107224814993216_6814638679737985542_n.png?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGer_JGu9ORstuXjrI6_fduMBNYGzn6L18wE1gbOfovX9TSRLJEYQ-Vlfjuc8xmVv9ZHGfUTErWU0mrI5hqHQdU&_nc_ohc=kJDEwo0ZXg8Q7kNvwEgf4_p&_nc_oc=Adm1HlO-MDS7Niz48eXIRSLRbWvbwMgtNzPA7sF7vh6sd9FqU8P-Gm5_A4ex-1DKUdA&_nc_zt=23&_nc_ht=scontent.fmnl37-1.fna&_nc_gid=QUdWKKvD92W1ZoSpVEEfwA&oh=00_AfECcCPvay4L0uwEnlB8rAZ6x612PCr1PfE0HMLxMkVqVg&oe=67F8121A",
                 logo:
-                    "https://scontent.fmnl3-4.fna.fbcdn.net/v/t39.30808-6/243164681_129569229425441_2735994999141557668_n.png?_nc_cat=101&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeEbP8-5Gi-7bJRCCF4jsRTzXw_dJ_esge5fD90n96yB7owGWIt5TRDCLfqYY2vLNWIcJNofz_vQDB_GP1dlT25D&_nc_ohc=KUHazhezqFMQ7kNvgH5UebF&_nc_oc=Adl-jnskXe4gC1duCDKZuvJt8VXvvsbcI105Y_x-zHBBUE9C091ccEiqGLjOBEFsgII&_nc_zt=23&_nc_ht=scontent.fmnl3-4.fna&_nc_gid=h7GLTAE4b7RySwHanVcJMg&oh=00_AYFfofMxZ-HhGYqSZbStemTROFzJMpTBZJo3WbPIJaocuw&oe=67E99C57",
-                logo2:
-                    "https://scontent.fmnl37-1.fna.fbcdn.net/v/t39.30808-6/225717845_107224814993216_6814638679737985542_n.png?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGer_JGu9ORstuXjrI6_fduMBNYGzn6L18wE1gbOfovX9TSRLJEYQ-Vlfjuc8xmVv9ZHGfUTErWU0mrI5hqHQdU&_nc_ohc=eUGU-KoqauYQ7kNvgEjv29f&_nc_oc=Adkl0nhbb3lU5UTPZg1K7Iw1Qka540wz9Idytkl199maToX16oJ-K8lVvaXAKRXXb4o&_nc_zt=23&_nc_ht=scontent.fmnl37-1.fna&_nc_gid=m7ktn7SYfm4F7DjiKQhOZg&oh=00_AYGI00wWrNCXybpHG7rXIXejkZ2EL80VFRPR9Se6RiMnEA&oe=67E9919A",
+                    "https://scontent.fmnl3-4.fna.fbcdn.net/v/t39.30808-6/243164681_129569229425441_2735994999141557668_n.png?_nc_cat=101&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeEbP8-5Gi-7bJRCCF4jsRTzXw_dJ_esge5fD90n96yB7owGWIt5TRDCLfqYY2vLNWIcJNofz_vQDB_GP1dlT25D&_nc_ohc=0V0Tjb82ZIoQ7kNvwF5qMjC&_nc_oc=AdmeDC2AaAeIt4hWzqHDbWTanK_vhKwp9iQHdo0lzcKpw89Nd2XKZlaAbpWJzKEeZx8&_nc_zt=23&_nc_ht=scontent.fmnl3-4.fna&_nc_gid=C4ZhGE9Vpn-WcxgXMvAptA&oh=00_AfEhz4lu9pEbdTOb2os2FUAwieBvOu8OuCIgleHDF_8ECw&oe=67F7E497",
                 desc: "Lorem ipsum dolor sit amet consectetur adipiscing elit dictumst tempus, condimentum massa habitasse commodo primis feugiat sagittis id, scelerisque mus montes aptent pharetra gravida nostra molestie.",
                 testimonials: [
                     {
@@ -149,9 +150,13 @@
                 nameRules: [(v) => !!v || "Name is required"],
                 emailRules: [(v) => !!v || "Email is required", (v) => /.+@.+\..+/.test(v) || "Email must be valid"],
                 messageRules: [(v) => !!v || "Message is required"],
+                modal: false,
             };
         },
         methods: {
+            openDialog() {
+                this.modal = true;
+            },
             scrollToWhoWeAre() {
                 const whoWeAre = this.$refs.whoWeAre;
                 if (whoWeAre) {
@@ -171,12 +176,13 @@
                 }
             },
             submitForm() {
-                // Add your form submission logic here
                 alert("Form submitted!");
-                // Reset the form after submission
                 this.name = "";
                 this.email = "";
                 this.message = "";
+            },
+            async btnModal() {
+                this.modal = !this.modal;
             },
         },
     };
@@ -185,11 +191,11 @@
 <style scoped>
     body {
         background-color: #ffffff;
-        color: black; /* Change text color to black */
+        color: black; 
     }
     .floating-btn {
         position: absolute;
-        bottom: 180px; /* Adjust as needed */
+        bottom: 180px; 
         left: 85%;
         transform: translateX(-50%);
     }
