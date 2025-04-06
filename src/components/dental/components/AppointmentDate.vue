@@ -44,7 +44,6 @@
             return {
                 modal: false,
                 selectedDate: null,
-                // Dummy data for taken dates
                 calendarEvents: [
                     { name: "Taken Date 1", start: "2025-03-10", end: "2025-03-10", color: "red" },
                     { name: "Taken Date 2", start: "2025-03-15", end: "2025-03-15", color: "red" },
