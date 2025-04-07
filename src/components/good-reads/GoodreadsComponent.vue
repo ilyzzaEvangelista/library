@@ -10,7 +10,7 @@
                     <v-text-field v-model="searchTerm" class="mb-5" label="Search Books" append-icon="mdi-magnify" single-line hide-details outlined dense />
                 </v-col>
                 <v-col cols="8">
-                    <CompCreate :book="selectedBook" @book-added="handleBookAdded" @book-updated="handleBookUpdated" />
+                    <CompCreate :book="selectedBook" @book-added="handleBookAdded" />
                 </v-col>
             </v-row>
         </section>
@@ -33,7 +33,7 @@
 
                 <template v-slot:[`item.actions`]="{ item }">
                     <div class="d-flex justify-center align-center">
-                        <CompCreate :book="item" @book-added="handleBookAdded" @book-updated="handleBookUpdated" />
+                        <CompCreate :book="item" @book-updated="handleBookUpdated" />
                         <v-btn small color="#B71C1C" class="mx-2 text-capitalized" style="color: white;" @click="removeBook(item)">
                             {{ formattedLabels.delete }}
                         </v-btn>
@@ -93,45 +93,7 @@
                     { text: "Description", align: "center", value: "description" },
                     { text: "Actions", align: "center", value: "actions", sortable: false },
                 ],
-                books: [
-                    {
-                        title: "Chasing the Puck",
-                        author: "Lyssa Lemire",
-                        description:
-                            "Chasing the Puck is a full-length hockey romance novel with lots of steam, sizzling banter, no cheating, and a guaranteed HEA ending! He falls first and HARDone bed tropetutor x jockhe takes care of her when she's sickno 3rd act breakupdual POV",
-                        image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1720525214i/216277240.jpg",
-                    },
-                    {
-                        title: "The Silent Patient",
-                        author: "Alex Michaelides",
-                        description: "A psychological thriller about a woman who shoots her husband and then refuses to speak. The twist will leave you speechless.",
-                        image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1668782119i/40097951.jpg",
-                    },
-                    {
-                        title: "Where the Crawdads Sing",
-                        author: "Delia Owens",
-                        description: "A beautiful and haunting coming-of-age story of a girl growing up in the swamps of North Carolina. A blend of romance, mystery, and nature.",
-                        image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1582135294i/36809135.jpg",
-                    },
-                    {
-                        title: "The Midnight Library",
-                        author: "Matt Haig",
-                        description: "A novel about the choices that go into a life well lived, featuring a woman who explores alternate lives in the Midnight Library, where each book represents a different possibility.",
-                        image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1602190253i/52578297.jpg",
-                    },
-                    {
-                        title: "The Seven Husbands of Evelyn Hugo",
-                        author: "Taylor Jenkins Reid",
-                        description: "An old Hollywood star recounts her life story, including her seven marriages, in this compelling tale about love, identity, and the price of fame.",
-                        image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1664458703i/32620332.jpg",
-                    },
-                    {
-                        title: "The Vanishing Half",
-                        author: "Brit Bennett",
-                        description: "A gripping story about twin sisters who lead very different lives, one passing as white and the other living as a Black woman in a small Southern town.",
-                        image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1577090827l/51791252.jpg",
-                    },
-                ],
+                books: [],
                 editDialog: false,
                 editingIndex: null,
                 editedBook: {
@@ -140,9 +102,9 @@
                     description: "",
                     image: null,
                 },
+                selectedBook: null,
             };
         },
-
         computed: {
             formattedLabels() {
                 return {
@@ -156,18 +118,15 @@
                     return book.title.toLowerCase().includes(searchTermLower) || book.author.toLowerCase().includes(searchTermLower) || book.description.toLowerCase().includes(searchTermLower);
                 });
             },
-
             pageCount() {
                 return Math.ceil(this.filteredBooks.length / this.itemsPerPage);
             },
-
             paginatedBooks() {
                 const start = (this.page - 1) * this.itemsPerPage;
                 const end = start + this.itemsPerPage;
                 return this.filteredBooks.slice(start, end);
             },
         },
-
         methods: {
             capitalizeSentence(text) {
                 return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
@@ -176,7 +135,6 @@
                 this.selectedImage = image;
                 this.imageDialog = true;
             },
-
             addBook() {
                 this.loading = true; // Start loading
                 setTimeout(() => {
@@ -188,19 +146,18 @@
                     this.loading = false; // Stop loading after 3 seconds
                 }, 3000); // 3-second delay
             },
-
             handleBookUpdated(updatedBook) {
-                this.loading = true; // Start loading
+                this.loading = true;
                 setTimeout(() => {
                     const index = this.books.findIndex((book) => book.id === updatedBook.id);
                     if (index !== -1) {
                         this.books.splice(index, 1, updatedBook);
+                        this.saveBooksToLocalStorage(); 
                     }
                     this.selectedBook = null;
-                    this.loading = false; // Stop loading after 3 seconds
-                }, 3000); // 3-second delay
+                    this.loading = false;
+                }, 3000);
             },
-
             editBook(index) {
                 this.editingIndex = index;
                 this.editedBook = { ...this.books[index] };
@@ -216,8 +173,12 @@
             cancelEdit() {
                 this.editDialog = false;
             },
-            removeBook(index) {
-                this.books.splice(index, 1);
+            removeBook(book) {
+                const index = this.books.indexOf(book);
+                if (index !== -1) {
+                    this.books.splice(index, 1);
+                    this.saveBooksToLocalStorage(); 
+                }
             },
             onEditFileChange(event) {
                 const file = event.target.files[0];
@@ -230,13 +191,25 @@
                 }
             },
             handleBookAdded(bookData) {
-                this.loading = true; // Start loading
+                this.loading = true;
                 setTimeout(() => {
-                    // Add the new book to the beginning of the array
                     this.books.unshift(bookData);
-                    this.loading = false; // Stop loading after 3 seconds
-                }, 3000); // 3-second delay
+                    this.saveBooksToLocalStorage(); 
+                    this.loading = false;
+                }, 3000);
             },
+            saveBooksToLocalStorage() {
+                localStorage.setItem("books", JSON.stringify(this.books));
+            },
+            loadBooksFromLocalStorage() {
+                const storedBooks = localStorage.getItem("books");
+                if (storedBooks) {
+                    this.books = JSON.parse(storedBooks);
+                }
+            },
+        },
+        mounted() {
+            this.loadBooksFromLocalStorage();
         },
     };
 </script>
@@ -253,9 +226,9 @@
     }
 
     .truncate-text {
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         max-width: 150px;
         display: inline-block;
     }
