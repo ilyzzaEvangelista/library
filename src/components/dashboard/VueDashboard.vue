@@ -1,6 +1,10 @@
 <template>
     <v-app>
         <v-container fluid>
+            <v-app-bar app color="indigo" dark>
+                <v-toolbar-title>DASHBOARD</v-toolbar-title>
+            </v-app-bar>
+    
             <!-- Greetings & Weather -->
             <v-row>
                 <v-col cols="12">

@@ -1,15 +1,15 @@
 <template>
     <div>
-        <v-btn color="#1A237E" @click="openDialog" small class="white--text text-capitalized">
+        <v-btn v-if="stat !== 'new'"  color="#1A237E" @click="openDialog" small class="white--text text-capitalized">
             {{ appointment ? 'Update' : 'Book an appointment' }}
         </v-btn>
 
-        <v-dialog v-model="modal" :width="dialogWidth">
+        <v-dialog v-model="modal" width="700">
             <v-card flat>
                 <v-card-title class="pa-0">
                     <v-toolbar class="elevation-0">
                         <v-spacer></v-spacer>
-                        <v-card-title class="headline">Appointment Request Form</v-card-title>
+                        <v-card-title class="headline">{{ !appointment ? 'Appointment Request Form' : 'Update Request Form'}}</v-card-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
                             <v-btn icon @click="cancelDialog">
@@ -22,7 +22,7 @@
                 <v-progress-linear :active="loading" :indeterminate="loading" absolute top color="#1A237E"></v-progress-linear>
                 <v-card-text flat>
                     <v-container>
-                        <v-form @submit.prevent="submitForm">
+                        <v-form ref="form" @submit.prevent="submitForm">
                             <!-- Name -->
                             <v-text-field v-model="form.name" label="Name" :rules="rules.rules" outlined dense required></v-text-field>
 
@@ -42,7 +42,7 @@
                             <v-text-field type="date" v-model="form.date" label="Appointment Date" :rules="rules.rules" outlined dense required></v-text-field>
 
                             <!-- X-ray File Input -->
-                            <v-file-input prepend-icon="" prepend-inner-icon="mdi-file-image" type="file" accept="image/png, image/jpeg, image/bmp" @change="onFileChange" :rules="rules.rules" :disabled="loading" outlined dense />
+                            <v-file-input prepend-icon="" prepend-inner-icon="mdi-file-image" type="file" accept="image/png, image/jpeg, image/bmp" @change="onFileChange" :disabled="loading" outlined dense />
                         </v-form>
                     </v-container>
                 </v-card-text>
@@ -76,6 +76,10 @@
                     image: null,
                 }),
             },
+            stat: {
+                type: String,
+                default: "",
+            },  
         },
         data() {
             return {
@@ -92,18 +96,12 @@
                     { title: "Cleaning", description: "Professional cleaning services to maintain a healthy, bright smile." },
                     { title: "Pasta / Filling", description: "Fill cavities and restore the strength of your teeth with high-quality dental fillings." },
                 ],
-                isAdmin: false,
                 bookedAppointments: [],
                 loading: false,
                 rules: {
                     rules: [(v) => !!v || "This is a required field."],
                 },
             };
-        },
-        computed: {
-            dialogWidth() {
-                return this.isAdmin ? 1200 : 700;
-            },
         },
         watch: {
             appointment: {
@@ -115,8 +113,16 @@
         },
         mounted() {
             this.loadAppointments();
+            this.isAdmin();
         },
         methods: {
+            isAdmin(){
+                if(this.stat === 'new'){
+                    this.modal = true
+                }else{
+                    this.modal = false
+                }
+            },
             openDialog() {
                 this.modal = true;
                 this.loading = true;
@@ -142,45 +148,77 @@
             },
             cancelDialog() {
                 this.modal = false;
-                this.form = {
-                    name: "",
-                    age: "",
-                    email: "",
-                    contact: "",
-                    service: null,
-                    date: null,
-                    image: null,
-                };
+                this.loading = false;
+                this.$nextTick(() => {
+                    const overlay = document.querySelector('.v-overlay__scrim');
+                    if (overlay) overlay.style.display = 'none';
+                    this.form = {
+                        name: "",
+                        age: "",
+                        email: "",
+                        contact: "",
+                        service: null,
+                        date: null,
+                        image: null,
+                    };
+                }); 
             },
             submitForm() {
-                this.loading = true;
-                setTimeout(() => {
-                    if (this.appointment) {
-                        const updatedAppointments = this.bookedAppointments.map((appointment) => (appointment.id === this.appointment.id ? { ...this.form } : appointment));
-                        this.bookedAppointments = updatedAppointments;
-                        localStorage.setItem("appointments", JSON.stringify(this.bookedAppointments));
-                        this.$emit("appointment-updated", { ...updatedAppointments });
-                        this.$toast.success("Successfully updated appointment!", {
-                            position: POSITION.BOTTOM_RIGHT,
-                            timeout: 2000,
-                            icon: "mdi-checkbox-marked-circle-outline",
-                            pauseOnHover: true,
-                        });
-                    } else {
-                        this.bookedAppointments.push({ ...this.form });
-                        localStorage.setItem("appointments", JSON.stringify(this.bookedAppointments));
-                        this.$emit("appointment-added", { ...this.form });
-                        this.$toast.success("New appointment added successfully!", {
-                            position: POSITION.BOTTOM_RIGHT,
-                            timeout: 2000,
-                            icon: "mdi-checkbox-marked-circle-outline",
-                            pauseOnHover: true,
-                        });
-                    }
+                if (this.$refs.form.validate()) {
+                    this.loading = true;
 
-                    this.modal = false;
-                    this.loading = false;
-                }, 3000);
+                    setTimeout(() => {
+                        if (this.appointment) {
+                            // Update appointment based on `id` and update `date`
+                            const updatedAppointments = this.bookedAppointments.map((a) =>
+                                a.id === this.appointment.id
+                                    ? {
+                                        ...a,  // Keep the existing data
+                                        name: this.form.name || a.name,
+                                        age: this.form.age || a.age,
+                                        email: this.form.email || a.email,
+                                        contact: this.form.contact || a.contact,
+                                        service: this.form.service || a.service,
+                                        date: this.form.date || a.date,  // Update date if changed
+                                        image: this.form.image || a.image,
+                                    }
+                                    : a
+                            );
+
+                            this.bookedAppointments = updatedAppointments;
+                            localStorage.setItem("appointments", JSON.stringify(this.bookedAppointments));
+                            this.$emit("appointment-updated", updatedAppointments);
+
+                            this.$toast.success("Successfully updated appointment!", {
+                                position: POSITION.BOTTOM_RIGHT,
+                                timeout: 2000,
+                                icon: "mdi-checkbox-marked-circle-outline",
+                                pauseOnHover: true,
+                            });
+                        } else {
+                            const newAppointment = { 
+                                id: Date.now(),  
+                                date: this.form.date,  
+                                ...this.form
+                            };
+
+                            this.bookedAppointments.push(newAppointment);
+                            localStorage.setItem("appointments", JSON.stringify(this.bookedAppointments));
+                            this.$emit("appointment-added", newAppointment);
+
+                            this.$toast.success("New appointment added successfully!", {
+                                position: POSITION.BOTTOM_RIGHT,
+                                timeout: 2000,
+                                icon: "mdi-checkbox-marked-circle-outline",
+                                pauseOnHover: true,
+                            });
+                            this.cancelDialog();
+                        }
+
+                        this.modal = false;
+                        this.loading = false;
+                    }, 3000);
+                }
             },
             loadAppointments() {
                 const storedAppointments = localStorage.getItem("appointments");

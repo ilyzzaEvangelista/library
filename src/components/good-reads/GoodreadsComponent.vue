@@ -1,5 +1,9 @@
 <template>
     <div id="app">
+        <v-app-bar app color="indigo" dark>
+            <v-toolbar-title>LIST OF BOOKS</v-toolbar-title>
+        </v-app-bar>
+
         <header>
             <h1>My Literary Journey</h1>
         </header>
