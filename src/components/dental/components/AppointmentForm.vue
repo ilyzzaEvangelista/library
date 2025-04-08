@@ -50,7 +50,7 @@
                 <v-divider></v-divider>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn class="text-capitalized" color="#1A237E" small width="150px" dark @click="submitForm">
+                    <v-btn class="text-capitalized" color="#1A237E" small width="150px" dark @click="submitForm" :loading="loading">
                         {{ appointment ? 'Update' : 'Submit' }}
                     </v-btn>
                     <v-spacer></v-spacer>

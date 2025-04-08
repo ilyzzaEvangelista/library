@@ -9,7 +9,10 @@
                 <v-card-title class="pa-0">
                     <v-toolbar class="elevation-0">
                         <v-spacer></v-spacer>
-                        <v-card-title class="headline">Available Dates</v-card-title>
+
+                        <v-card-title>
+                            <span class="headline">Calendar</span>
+                        </v-card-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
                             <v-btn icon @click="cancelDialog">
@@ -20,15 +23,23 @@
                 </v-card-title>
                 <v-divider></v-divider>
 
-                <!-- Services Grid -->
-                <v-card-text>
-                    <v-container>
-                        <v-card>
-                            <v-card-title>
-                                <span class="headline">Current Month Calendar</span>
-                            </v-card-title>
+                <v-progress-linear :active="loading" :indeterminate="loading" absolute top color="#1A237E"></v-progress-linear>
+
+                <!-- Month Navigation -->
+                <v-row class="d-flex justify-center align-center mr-10 my-5">
+                    <v-btn @click="goToPreviousMonth" icon>
+                        <v-icon>mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <span class="headline mt-0">{{ formattedMonth }}</span>
+                    <v-btn @click="goToNextMonth" icon>
+                        <v-icon>mdi-chevron-right</v-icon>
+                    </v-btn>
+                </v-row>
+                <v-card-text >
+                    <v-container class="pt-0">
+                        <v-card flat>
                             <v-card-text>
-                                <v-calendar v-model="selectedDate" :events="calendarEvents" color="green" :first-day-of-week="1" class="mx-auto" :show-week="true">
+                                <v-calendar v-model="selectedDate" :events="calendarEvents" color="#BDBDBD" :first-day-of-week="1" class="mx-auto" :show-week="true" :min-date="minDate" :max-date="maxDate">
                                     <template v-slot:event="props">
                                         <!-- Tooltip for each event -->
                                         <v-tooltip bottom>
@@ -55,57 +66,56 @@
         data() {
             return {
                 modal: false,
-                selectedDate: null,
-                calendarEvents: [], // Initially empty, will be populated with dates from localStorage
+                selectedDate: new Date(),
+                calendarEvents: [],
+                loading: false,
+                minDate: new Date().toISOString().split("T")[0],
+                maxDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split("T")[0],
             };
+        },
+        computed: {
+            // Display the current month and year
+            formattedMonth() {
+                const options = { year: "numeric", month: "long" };
+                return this.selectedDate.toLocaleDateString("en-US", options);
+            },
         },
         mounted() {
             this.loadAppointmentsFromLocalStorage();
         },
         methods: {
             openDialog() {
+                this.loadAppointmentsFromLocalStorage();
                 this.modal = true;
             },
             cancelDialog() {
                 this.modal = false;
             },
             loadAppointmentsFromLocalStorage() {
-                // Fetch appointments data from localStorage
+                this.loading = true;
                 const storedAppointments = JSON.parse(localStorage.getItem("appointments")) || [];
-
-                // Map stored appointments into calendar events
                 const events = storedAppointments.map((appointment) => {
                     return {
-                        name: `Taken: ${appointment.name}`, // Tooltip text
-                        start: appointment.date, // Assume appointment.date is in "YYYY-MM-DD" format
-                        end: appointment.date, // If you need end date as well
-                        color: "#1A237E", // Set the color for marked dates
+                        name: `Reserved`,
+                        start: appointment.date,
+                        end: appointment.date,
+                        color: "#0077B5",
                         style: "white--text",
                     };
                 });
-
-                // Set the calendar events based on appointments
                 this.calendarEvents = events;
+                this.loading = false;
+            },
+            goToPreviousMonth() {
+                const prevMonth = new Date(this.selectedDate);
+                prevMonth.setMonth(prevMonth.getMonth() - 1);
+                this.selectedDate = prevMonth;
+            },
+            goToNextMonth() {
+                const nextMonth = new Date(this.selectedDate);
+                nextMonth.setMonth(nextMonth.getMonth() + 1);
+                this.selectedDate = nextMonth;
             },
         },
     };
 </script>
-
-<style scoped>
-    /* Style the date numbers in the calendar */
-    .v-calendar__date--current,
-    .v-calendar__date {
-        color: white !important; /* Make the date number white */
-    }
-
-    /* Optionally style selected date for better contrast */
-    .v-calendar__date--selected {
-        color: white !important;
-        background-color: rgb(133, 193, 4) !important; /* Keep the indigo background color for selected date */
-    }
-
-    /* Optional: Add some custom styles for better visibility */
-    .v-calendar__date {
-        font-weight: bold;
-    }
-</style>
