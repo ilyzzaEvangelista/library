@@ -28,7 +28,19 @@
                                 <span class="headline">Current Month Calendar</span>
                             </v-card-title>
                             <v-card-text>
-                                <v-calendar v-model="selectedDate" :events="calendarEvents" color="indigo" :first-day-of-week="1" class="mx-auto" :show-week="true"></v-calendar>
+                                <v-calendar v-model="selectedDate" :events="calendarEvents" color="green" :first-day-of-week="1" class="mx-auto" :show-week="true">
+                                    <template v-slot:event="props">
+                                        <!-- Tooltip for each event -->
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <div v-bind="attrs" v-on="on" class="event-tooltip" :style="{ backgroundColor: props.event.color || 'red' }">
+                                                    {{ props.event.name }}
+                                                </div>
+                                            </template>
+                                            <span>{{ props.event.name }}</span>
+                                        </v-tooltip>
+                                    </template>
+                                </v-calendar>
                             </v-card-text>
                         </v-card>
                     </v-container>
@@ -44,13 +56,11 @@
             return {
                 modal: false,
                 selectedDate: null,
-                calendarEvents: [
-                    { name: "Taken Date 1", start: "2025-03-10", end: "2025-03-10", color: "red" },
-                    { name: "Taken Date 2", start: "2025-03-15", end: "2025-03-15", color: "red" },
-                    { name: "Taken Date 3", start: "2025-03-20", end: "2025-03-20", color: "red" },
-                    { name: "Taken Date 4", start: "2025-03-25", end: "2025-03-25", color: "red" },
-                ],
+                calendarEvents: [], // Initially empty, will be populated with dates from localStorage
             };
+        },
+        mounted() {
+            this.loadAppointmentsFromLocalStorage();
         },
         methods: {
             openDialog() {
@@ -59,10 +69,43 @@
             cancelDialog() {
                 this.modal = false;
             },
+            loadAppointmentsFromLocalStorage() {
+                // Fetch appointments data from localStorage
+                const storedAppointments = JSON.parse(localStorage.getItem("appointments")) || [];
+
+                // Map stored appointments into calendar events
+                const events = storedAppointments.map((appointment) => {
+                    return {
+                        name: `Taken: ${appointment.name}`, // Tooltip text
+                        start: appointment.date, // Assume appointment.date is in "YYYY-MM-DD" format
+                        end: appointment.date, // If you need end date as well
+                        color: "#1A237E", // Set the color for marked dates
+                        style: "white--text",
+                    };
+                });
+
+                // Set the calendar events based on appointments
+                this.calendarEvents = events;
+            },
         },
     };
 </script>
 
 <style scoped>
-   
+    /* Style the date numbers in the calendar */
+    .v-calendar__date--current,
+    .v-calendar__date {
+        color: white !important; /* Make the date number white */
+    }
+
+    /* Optionally style selected date for better contrast */
+    .v-calendar__date--selected {
+        color: white !important;
+        background-color: rgb(133, 193, 4) !important; /* Keep the indigo background color for selected date */
+    }
+
+    /* Optional: Add some custom styles for better visibility */
+    .v-calendar__date {
+        font-weight: bold;
+    }
 </style>
