@@ -57,11 +57,19 @@
                 </v-col>
             </v-row>
 
+            <v-row>
+                <v-col cols="12">
+                    <v-card class="pa-3" elevation="1">
+                        <CardList />
+                    </v-card>
+                </v-col>    
+            </v-row>
+
             <!-- Third Row: Employees & Attendance -->
             <v-row>
                 <v-col cols="12" md="6">
                     <v-card class="dashboard-card pb-5">
-                        <v-card-title>Employee List</v-card-title>
+                        <v-card-title>Employee List using Chart.js</v-card-title>
                         <v-divider></v-divider>
                         <ListofEmployees />
                     </v-card>
@@ -69,7 +77,7 @@
 
                 <v-col cols="12" md="6">
                     <v-card class="dashboard-card pb-5">
-                        <v-card-title>Attendance Overview</v-card-title>
+                        <v-card-title>Attendance Overview Apexcharts </v-card-title>
                         <v-divider></v-divider>
                         <AttendanceChart />
                     </v-card>
@@ -85,12 +93,14 @@
     import AttendanceChart from "./components/AttendanceChart.vue";
     import AnnouncementChart from "./components/AnnouncementChart.vue";
     import TodaysHightlights from "./components/TodaysHightlights.vue";
+    import CardList from './components/CardList.vue';
     export default {
         components: {
             ListofEmployees,
             AttendanceChart,
             AnnouncementChart,
-            TodaysHightlights
+            TodaysHightlights,
+            CardList
         },
         data() {
             return {
