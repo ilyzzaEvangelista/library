@@ -33,48 +33,57 @@
 </template>
 
 <script>
-  import Chart from "chart.js";
+import Chart from "chart.js";
 
-  export default {
-      data() {
-          return {
-              chartType: "bar",
-          };
-      },
-      mounted() {
-          this.renderChart();
-      },
-      methods: {
-          renderChart() {
-              const ctx = this.$refs.chartCanvas.getContext("2d");
-              new Chart(ctx, {
-                  type: this.chartType,
-                  data: {
-                      labels: ["January", "February", "March", "April", "May"],
-                      datasets: [
-                          {
-                              label: "Sales",
-                              data: [12, 19, 3, 5, 8],
-                              backgroundColor: "rgba(75, 192, 192, 0.5)",
-                              borderColor: "rgba(75, 192, 192, 1)",
-                              borderWidth: 1,
-                          },
-                      ],
-                  },
-                  options: {
-                      responsive: true,
-                      maintainAspectRatio: false,
-                  },
-              });
-          },
+export default {
+  data() {
+    return {
+      chartType: "bar",
+      chartInstance: null, // Keep reference to chart instance
+    };
+  },
+  mounted() {
+    this.renderChart();
+  },
+  methods: {
+    renderChart() {
+      const ctx = this.$refs.chartCanvas.getContext("2d");
 
-          changeChartType(type) {
-              this.chartType = type;
-              this.renderChart(); 
-          },
-      },
-  };
+      // Destroy previous chart if it exists
+      if (this.chartInstance) {
+        this.chartInstance.destroy();
+      }
+
+      this.chartInstance = new Chart(ctx, {
+        type: this.chartType === 'horizontalBar' ? 'bar' : this.chartType, // fallback for unsupported type
+        data: {
+          labels: ["January", "February", "March", "April", "May"],
+          datasets: [
+            {
+              label: "Sales",
+              data: [12, 19, 3, 5, 8],
+              backgroundColor: "rgba(75, 192, 192, 0.5)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          indexAxis: this.chartType === 'horizontalBar' ? 'y' : 'x',
+          responsive: true,
+          maintainAspectRatio: false,
+        },
+      });
+    },
+
+    changeChartType(type) {
+      this.chartType = type;
+      this.renderChart(); 
+    },
+  },
+};
 </script>
+
 
 <style scoped>
   .chart-container {
