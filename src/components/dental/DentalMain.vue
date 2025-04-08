@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <BookedAppointments v-if="modal" :modal="modal" v-on:btnModal="btnModal" />
+        <BookedAppointments v-if="modal" :mode="'new'" :modal="modal" v-on:btnModal="btnModal" />
         <!-- Navigation Bar -->
         <v-app-bar app color="indigo" dark>
             <v-toolbar-title>URMAZA DENTAL CLINIC</v-toolbar-title>
@@ -10,6 +10,7 @@
             <v-btn text @click="scrollToWhoWeAre">About Us</v-btn>
             <AppointmentDate />
             <v-btn text @click="scrollToContact">Contact</v-btn>
+            <LoginPage />
         </v-app-bar>
 
         <!-- Home -->
@@ -113,11 +114,13 @@
     import ServicesList from "./components/ServicesList.vue";
     import BookedAppointments from "./components/BookedAppointments.vue";
     import AppointmentDate from "./components/AppointmentDate.vue";
+    import LoginPage from "./components/LoginPage.vue";
     export default {
         components: {
             ServicesList,
             BookedAppointments,
             AppointmentDate,
+            LoginPage
         },
         data() {
             return {

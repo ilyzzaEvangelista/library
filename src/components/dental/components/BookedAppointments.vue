@@ -1,60 +1,70 @@
 <template>
-    <div class="pa-5">
+    <div>
         <v-dialog v-model="modal" width="1300px" @input="loadAppointments">
-            <v-card class="elevation-0 pa-5">
-                <v-card-title class="pa-0">
-                    <v-toolbar class="elevation-0">
-                        <v-spacer></v-spacer>
-                        <v-card-title class="headline">Booked Appointments</v-card-title>
-                        <v-spacer></v-spacer>
-                        <v-toolbar-items>
-                            <v-btn icon @click="cancelDialog">
-                                <v-icon>mdi-close</v-icon>
+            <span v-if="mode === 'new'">
+                <AppointmentForm :stat="'new'" :appointment="selectedItem" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
+            </span>
+            <span v-else>
+                <v-card class="elevation-0 pa-5">
+                    <v-card-title class="pa-0">
+                        <v-toolbar class="elevation-0">
+                          <v-spacer></v-spacer>
+                          <v-card-title class="headline">Booked Appointments {{ mode }}</v-card-title>
+                          <v-spacer></v-spacer>
+                          <v-toolbar-items>
+                            <v-tooltip bottom>
+                              <template #activator="{ on, attrs }">
+                                <v-btn icon v-bind="attrs" v-on="on" @click="cancelDialog">
+                                  <v-icon>mdi-logout</v-icon>
+                                </v-btn>
+                              </template>
+                              <span>Logout</span>
+                            </v-tooltip>
+                          </v-toolbar-items>
+                        </v-toolbar>
+                      </v-card-title>                      
+                    <v-divider></v-divider>
+
+                    <div class="pa-3">
+                        <v-col cols="12">
+                            <v-row>
+                                <v-col cols="4">
+                                    <v-text-field v-model="searchTerm" class="mb-5" label="Search Appointment" append-icon="mdi-magnify" single-line hide-details outlined dense />
+                                </v-col>
+                                <!-- <v-col cols="8">
+                                        <div class="d-flex justify-end mt-7">
+                                            <AppointmentForm :appointment="selectedItem" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
+                                        </div>
+                                    </v-col> -->
+                            </v-row>
+                        </v-col>
+                    </div>
+
+                    <v-data-table :headers="headers" :items="paginatedAppointments" :loading="loading" item-value="title" class="elevation-1" hide-default-footer>
+                        <template v-slot:[`item.image`]="{ item }">
+                            <v-btn class="text-capitalized" small v-if="item.image" text @click="viewImage(item.image)">
+                                View Image
                             </v-btn>
-                        </v-toolbar-items>
-                    </v-toolbar>
-                </v-card-title>
-                <v-divider></v-divider>
+                            <p class="mt-3" v-else>N/A</p>
+                        </template>
 
-                <div class="pa-3">
-                    <v-col cols="12">
-                        <v-row>
-                            <v-col cols="4">
-                                <v-text-field v-model="searchTerm" class="mb-5" label="Search Books" append-icon="mdi-magnify" single-line hide-details outlined dense />
-                            </v-col>
-                            <v-col cols="8">
-                                <div class="d-flex justify-end mt-7">
-                                    <AppointmentForm :appointment="selectedItem" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
-                                </div>
-                            </v-col>
-                        </v-row>
-                    </v-col>
-                </div>
+                        <template v-slot:[`item.date`]="{ item }">
+                            <p class="mt-3">{{ formatDate(item.date)}}</p>
+                        </template>
 
-                <v-data-table :headers="headers" :items="paginatedAppointments" :loading="loading" item-value="title" class="elevation-1" hide-default-footer>
-                    <template v-slot:[`item.image`]="{ item }">
-                        <v-btn class="text-capitalized" small v-if="item.image" text @click="viewImage(item.image)">
-                            View Image
-                        </v-btn>
-                        <p v-else>N/A</p>
-                    </template>
+                        <template v-slot:[`item.actions`]="{ item }">
+                            <div class="d-flex justify-center align-center">
+                                <AppointmentForm :appointment="item" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
+                                <v-btn small color="#B71C1C" class="mx-2 text-capitalized" style="color: white;" @click="removeBook(item)">
+                                    {{ formattedLabels.delete }}
+                                </v-btn>
+                            </div>
+                        </template>
+                    </v-data-table>
 
-                    <template v-slot:[`item.date`]="{ item }">
-                        <p class="mt-3"> {{ formatDate(item.date)}}</p>
-                    </template>
-
-                    <template v-slot:[`item.actions`]="{ item }">
-                        <div class="d-flex justify-center align-center">
-                            <AppointmentForm :appointment="item" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
-                            <v-btn small color="#B71C1C" class="mx-2 text-capitalized" style="color: white;" @click="removeBook(item)">
-                                {{ formattedLabels.delete }}
-                            </v-btn>
-                        </div>
-                    </template>
-                </v-data-table>
-
-                <v-pagination v-model="page" :length="pageCount" color="#1A237E" class="mt-4"></v-pagination>
-            </v-card>
+                    <v-pagination v-model="page" :length="pageCount" color="#1A237E" class="mt-4"></v-pagination>
+                </v-card>
+            </span>
         </v-dialog>
 
         <v-dialog v-model="imageDialog" max-width="400px">
@@ -85,6 +95,12 @@
 
     export default {
         components: { AppointmentForm },
+        props: {
+            mode: {
+                type: String,
+                default: "",
+            },
+        },
         data() {
             return {
                 modal: true,
@@ -101,8 +117,8 @@
                     { text: "Contact", value: "contact" },
                     { text: "Service", value: "service" },
                     { text: "Date", value: "date" },
-                    { text: "X-ray", value: "image", align: 'center' },
-                    { text: "Actions", value: "actions", align: 'center' },
+                    { text: "X-ray", value: "image", align: "center" },
+                    { text: "Actions", value: "actions", align: "center" },
                 ],
                 bookedAppointments: [],
                 selectedItem: null,
@@ -152,8 +168,8 @@
             },
 
             cancelDialog() {
-                this.modal = false;
-                this.bookedAppointments = [];
+               this.$emit('logout');
+               this.modal = false;
             },
 
             formatDate(date) {
@@ -165,9 +181,14 @@
 
                 setTimeout(() => {
                     if (updatedItems && updatedItems.id) {
-                        const index = this.bookedAppointments.findIndex((appointment) => appointment.id === updatedItems.id);
+                        const index = this.bookedAppointments.findIndex(
+                            (appointment) => appointment.id === updatedItems.id
+                        );
                         if (index !== -1) {
-                            this.bookedAppointments.splice(index, 1, updatedItems);
+                            this.bookedAppointments.splice(index, 1, {
+                                ...this.bookedAppointments[index],
+                                ...updatedItems,
+                            });
                             localStorage.setItem("appointments", JSON.stringify(this.bookedAppointments));
                         }
                     }
@@ -208,7 +229,7 @@
             },
         },
         mounted() {
-            this.loadAppointments(); 
+            this.loadAppointments();
         },
     };
 </script>

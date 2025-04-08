@@ -4,28 +4,41 @@ import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
 import "@mdi/font/css/materialdesignicons.css";
 import "./assets/color.scss";
-import router from './router'; // Ensure this imports correctly
-import Toast, { POSITION } from 'vue-toastification';
-import 'vue-toastification/dist/index.css';
+import VueRouter from 'vue-router';
+import Toast, { POSITION } from "vue-toastification";
+import "vue-toastification/dist/index.css";
 
-// Use Vuetify
+import DentalMain from "@/components/dental/DentalMain.vue";
+
+// Register plugins
 Vue.use(Vuetify);
-
-// Use Toast notifications
+Vue.use(VueRouter);
 Vue.use(Toast, {
-  position: POSITION.BOTTOM_RIGHT, // Customize position
-  timeout: 3000, // Customize timeout duration
+  position: POSITION.BOTTOM_RIGHT,
+  timeout: 3000,
 });
 
+// Create Vuetify instance
 const vuetify = new Vuetify({
   icons: {
-    defaultSet: "mdi", // Default icon set is mdi
+    defaultSet: "mdi",
   },
 });
 
-// Create the Vue instance with Vuetify and Router
+// Define routes
+const routes = [
+  { path: '/dental', component: DentalMain }
+];
+
+// Create router instance
+const router = new VueRouter({
+  mode: 'history',
+  routes
+});
+
+// Mount app
 new Vue({
-  vuetify, // Include Vuetify configuration
-  router,  // Include the router for navigation
-  render: (h) => h(App), // Render the main App component
+  vuetify,
+  router,
+  render: (h) => h(App)
 }).$mount("#app");
