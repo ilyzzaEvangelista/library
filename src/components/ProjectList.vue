@@ -20,10 +20,9 @@
                             </v-card>
                         </v-col>                        
                     </v-row>
-
-                    <GoodreadsComponent v-if="selectedProject?.name === 'Library'" />
-                    <VueDashboard v-if="selectedProject?.name === 'Dashboard'" />
-                    <DentalMain v-if="selectedProject?.name === 'Appointment System'" />
+                    <router-view to="/library" v-if="selectedProject?.name === 'Library'"></router-view>
+                    <router-view to="/dashboard" v-if="selectedProject?.name === 'Dashboard'"></router-view>
+                    <router-view to="/dental" v-if="selectedProject?.name === 'Appointment System'"></router-view>
                 </div>
             </div>
         </v-container>
@@ -31,17 +30,9 @@
 </template>
 
 <script>
-    import GoodreadsComponent from "./good-reads/GoodreadsComponent.vue";
-    import VueDashboard from "./dashboard/VueDashboard.vue";
-    import DentalMain from "./dental/DentalMain.vue";
     export default {
         props: {
             setSelectedProject: Function, // Function passed from App.vue
-        },
-        components: {
-            GoodreadsComponent,
-            VueDashboard,
-            DentalMain
         },
         data() {
             return {
@@ -78,11 +69,19 @@
             selectProject(project) {
                 this.selectedProject = project;
                 this.setSelectedProject(project);
+                if (project.name === "Appointment System" && this.$route.path !== "/dental") {
+                    this.$router.push("/dental");
+                }else if(project.name === "Dashboard" && this.$route.path !== "/dashboard"){
+                    this.$router.push("/dashboard");
+                }else if(project.name === "Library" && this.$route.path !== "/library"){
+                    this.$router.push("/library");
+                }
             },
             resetCrumbs() {
                 this.selectedProject = null;
                 this.setSelectedProject(null);
-            },
+                this.$router.push("/");
+            }
         },
     };
 </script>
