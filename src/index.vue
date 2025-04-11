@@ -17,7 +17,7 @@
                     <ProjectList ref="homeSection" :setSelectedProject="setSelectedProject" />
                     <!-- Hide these sections when a project is selected -->
                     <CertificatesList v-if="!selectedProject" ref="certificateSection" />
-                    <ContactMe v-if="!selectedProject" ref="contactSection" />
+                    <ContactMe v-if="!selectedProject" ref="contactSection" />         
                 </v-col>
             </v-row>
         </v-app>

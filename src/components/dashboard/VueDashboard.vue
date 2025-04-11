@@ -60,6 +60,11 @@
             <v-row>
                 <v-col cols="12">
                     <v-card class="pa-3" elevation="1">
+                        <v-card-title>
+                            <v-spacer></v-spacer>
+                            <h4>Charts using Apexcharts</h4>
+                            <v-spacer></v-spacer>
+                        </v-card-title>
                         <CardList />
                     </v-card>
                 </v-col>    
@@ -69,7 +74,7 @@
             <v-row>
                 <v-col cols="12" md="6">
                     <v-card class="dashboard-card pb-5">
-                        <v-card-title>Employee List using Chart.js</v-card-title>
+                        <v-card-title>Sales Chart using Chart.js</v-card-title>
                         <v-divider></v-divider>
                         <ListofEmployees />
                     </v-card>
@@ -77,7 +82,7 @@
 
                 <v-col cols="12" md="6">
                     <v-card class="dashboard-card pb-5">
-                        <v-card-title>Attendance Overview Apexcharts </v-card-title>
+                        <v-card-title>Attendance Chart using Apexcharts </v-card-title>
                         <v-divider></v-divider>
                         <AttendanceChart />
                     </v-card>
@@ -95,6 +100,7 @@
     import TodaysHightlights from "./components/TodaysHightlights.vue";
     import CardList from './components/CardList.vue';
     export default {
+        name: 'VueDashboard',
         components: {
             ListofEmployees,
             AttendanceChart,
@@ -142,7 +148,6 @@
         },
     };
 </script>
-
 <style scoped>
     .header-card {
         background: linear-gradient(135deg, #ffffff, #ffffff);
@@ -151,27 +156,23 @@
         border-radius: 12px;
         text-align: center;
     }
-
     .header-content {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 8px;
     }
-
     .dashboard-card {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-
     .dashboard-container {
         background: linear-gradient(135deg, #f7f7f7, #ffffff);
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         padding: 20px;
         border-radius: 12px;
     }
-
     .header-content {
         display: flex;
         flex-direction: column;
@@ -180,17 +181,14 @@
         gap: 10px;
         padding-bottom: 12px;
     }
-
     .details {
         display: flex;
         align-items: center;
         gap: 12px;
     }
-
     .quick-updates {
         display: flex;
         gap: 10px;
         margin-top: 10px;
     }
-
 </style>

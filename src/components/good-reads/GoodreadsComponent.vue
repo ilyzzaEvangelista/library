@@ -74,6 +74,7 @@
 <script>
     import CompCreate from "./components/CompCreate.vue";
     export default {
+        name: 'GoodreadsComponent',
         components: {
             CompCreate,
         },

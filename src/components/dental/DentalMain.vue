@@ -19,11 +19,11 @@
                 <v-card class="pa-5" flat>
                     <v-row>
                         <v-col cols="12" md="6" class="d-flex flex-column justify-center">
-                            <v-img :src="banner" alt="Dental Clinic Image" height="500px" class="mx-auto mb-4"></v-img>
+                            <v-img :src="require('@/assets/dental/logo.png')" alt="Dental Clinic Image" height="500px" class="mx-auto mb-4"></v-img>
                             <v-btn color="indigo" @click="openDialog" class="white--text text-capitalized floating-btn">Book an appointment</v-btn>
                         </v-col>
                         <v-col cols="12" md="6">
-                            <v-img :src="logo" alt="Dental Clinic Image" height="220px" class="mx-auto mt-10 mb-4"></v-img>
+                            <v-img :src="require('@/assets/dental/banner.png')" alt="Dental Clinic Image" height="220px" class="mx-auto mt-10 mb-4"></v-img>
                         </v-col>
                     </v-row>
                 </v-card>
@@ -60,7 +60,7 @@
                             <p>{{ desc }}</p>
                         </v-col>
                         <v-col cols="12" md="6">
-                            <v-img :src="banner" alt="About Us Image"></v-img>
+                            <v-img :src="require('@/assets/dental/logo.png')" alt="About Us Image"></v-img>
                         </v-col>
                     </v-row>
                 </v-card>
@@ -116,6 +116,7 @@
     import AppointmentDate from "./components/AppointmentDate.vue";
     import LoginPage from "./components/LoginPage.vue";
     export default {
+        name: 'DentalMain',
         components: {
             ServicesList,
             BookedAppointments,
@@ -125,9 +126,9 @@
         data() {
             return {
                 banner:
-                    "https://scontent.fmnl37-1.fna.fbcdn.net/v/t39.30808-6/225717845_107224814993216_6814638679737985542_n.png?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGer_JGu9ORstuXjrI6_fduMBNYGzn6L18wE1gbOfovX9TSRLJEYQ-Vlfjuc8xmVv9ZHGfUTErWU0mrI5hqHQdU&_nc_ohc=kJDEwo0ZXg8Q7kNvwEgf4_p&_nc_oc=Adm1HlO-MDS7Niz48eXIRSLRbWvbwMgtNzPA7sF7vh6sd9FqU8P-Gm5_A4ex-1DKUdA&_nc_zt=23&_nc_ht=scontent.fmnl37-1.fna&_nc_gid=QUdWKKvD92W1ZoSpVEEfwA&oh=00_AfECcCPvay4L0uwEnlB8rAZ6x612PCr1PfE0HMLxMkVqVg&oe=67F8121A",
+                    "https://t3.ftcdn.net/jpg/00/91/95/80/360_F_91958064_ungBuwmGQ70kPptl9mNEN27BuADArJob.jpg",
                 logo:
-                    "https://scontent.fmnl3-4.fna.fbcdn.net/v/t39.30808-6/243164681_129569229425441_2735994999141557668_n.png?_nc_cat=101&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeEbP8-5Gi-7bJRCCF4jsRTzXw_dJ_esge5fD90n96yB7owGWIt5TRDCLfqYY2vLNWIcJNofz_vQDB_GP1dlT25D&_nc_ohc=0V0Tjb82ZIoQ7kNvwF5qMjC&_nc_oc=AdmeDC2AaAeIt4hWzqHDbWTanK_vhKwp9iQHdo0lzcKpw89Nd2XKZlaAbpWJzKEeZx8&_nc_zt=23&_nc_ht=scontent.fmnl3-4.fna&_nc_gid=C4ZhGE9Vpn-WcxgXMvAptA&oh=00_AfEhz4lu9pEbdTOb2os2FUAwieBvOu8OuCIgleHDF_8ECw&oe=67F7E497",
+                    "https://img.freepik.com/premium-vector/dental-logo-design-vector-templatecreative-dentist-logo-dental-clinic-vector-logo_607588-10199.jpg",
                 desc: "Lorem ipsum dolor sit amet consectetur adipiscing elit dictumst tempus, condimentum massa habitasse commodo primis feugiat sagittis id, scelerisque mus montes aptent pharetra gravida nostra molestie.",
                 testimonials: [
                     {
