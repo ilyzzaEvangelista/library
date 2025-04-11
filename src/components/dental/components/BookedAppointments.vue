@@ -5,24 +5,28 @@
                 <AppointmentForm :stat="'new'" :appointment="selectedItem" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
             </span>
             <span v-else>
+                <v-snackbar v-model="snackbar" :timeout="5000" color="white" top>
+                    <v-icon color="red" class="mr-3 mb-1">mdi-information-outline</v-icon>
+                    <span class="black--text">{{ snackbarMessage }}</span>
+                </v-snackbar>
                 <v-card class="elevation-0 pa-5">
                     <v-card-title class="pa-0">
                         <v-toolbar class="elevation-0">
-                          <v-spacer></v-spacer>
-                          <v-card-title class="headline">Booked Appointments {{ mode }}</v-card-title>
-                          <v-spacer></v-spacer>
-                          <v-toolbar-items>
-                            <v-tooltip bottom>
-                              <template #activator="{ on, attrs }">
-                                <v-btn icon v-bind="attrs" v-on="on" @click="cancelDialog">
-                                  <v-icon>mdi-logout</v-icon>
-                                </v-btn>
-                              </template>
-                              <span>Logout</span>
-                            </v-tooltip>
-                          </v-toolbar-items>
+                            <v-spacer></v-spacer>
+                            <v-card-title class="headline">Booked Appointments {{ mode }}</v-card-title>
+                            <v-spacer></v-spacer>
+                            <v-toolbar-items>
+                                <v-tooltip bottom>
+                                    <template #activator="{ on, attrs }">
+                                        <v-btn icon v-bind="attrs" v-on="on" @click="cancelDialog">
+                                            <v-icon>mdi-logout</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Logout</span>
+                                </v-tooltip>
+                            </v-toolbar-items>
                         </v-toolbar>
-                      </v-card-title>                      
+                    </v-card-title>
                     <v-divider></v-divider>
 
                     <div class="pa-3">
@@ -31,11 +35,6 @@
                                 <v-col cols="4">
                                     <v-text-field v-model="searchTerm" class="mb-5" label="Search Appointment" append-icon="mdi-magnify" single-line hide-details outlined dense />
                                 </v-col>
-                                <!-- <v-col cols="8">
-                                        <div class="d-flex justify-end mt-7">
-                                            <AppointmentForm :appointment="selectedItem" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
-                                        </div>
-                                    </v-col> -->
                             </v-row>
                         </v-col>
                     </div>
@@ -66,27 +65,6 @@
                 </v-card>
             </span>
         </v-dialog>
-
-        <v-dialog v-model="imageDialog" max-width="400px">
-            <v-card>
-                <v-card-title class="pa-0">
-                    <v-toolbar class="elevation-0">
-                        <v-spacer></v-spacer>
-                        <v-card-title>Book Cover</v-card-title>
-                        <v-spacer></v-spacer>
-                        <v-toolbar-items>
-                            <v-btn icon @click="imageDialog = false">
-                                <v-icon>mdi-close</v-icon>
-                            </v-btn>
-                        </v-toolbar-items>
-                    </v-toolbar>
-                </v-card-title>
-                <hr />
-                <v-card-text class="text-center mt-5">
-                    <v-img :src="selectedImage" max-width="100%"></v-img>
-                </v-card-text>
-            </v-card>
-        </v-dialog>
     </div>
 </template>
 
@@ -109,7 +87,7 @@
                 loading: false,
                 searchTerm: "",
                 selectedImage: null,
-                imageDialog: false,
+                imageDialog: false, 
                 headers: [
                     { text: "Name", value: "name" },
                     { text: "Age", value: "age" },
@@ -122,6 +100,9 @@
                 ],
                 bookedAppointments: [],
                 selectedItem: null,
+                snackbar: false,
+                snackbarMessage: "",
+                upcomingAppointment: null,
             };
         },
         computed: {
@@ -167,9 +148,18 @@
                 this.modal = true;
             },
 
+            showSnackbar() {
+                if (this.upcomingAppointment) {
+                    this.snackbarMessage = `Upcoming Appointment: ${this.upcomingAppointment.name} 
+                                on ${this.formatDate(this.upcomingAppointment.date)} 
+                                for ${this.upcomingAppointment.service}`;
+                    this.snackbar = true;
+                }
+            },
+
             cancelDialog() {
-               this.$emit('logout');
-               this.modal = false;
+                this.$emit("logout");
+                this.modal = false;
             },
 
             formatDate(date) {
@@ -181,9 +171,7 @@
 
                 setTimeout(() => {
                     if (updatedItems && updatedItems.id) {
-                        const index = this.bookedAppointments.findIndex(
-                            (appointment) => appointment.id === updatedItems.id
-                        );
+                        const index = this.bookedAppointments.findIndex((appointment) => appointment.id === updatedItems.id);
                         if (index !== -1) {
                             this.bookedAppointments.splice(index, 1, {
                                 ...this.bookedAppointments[index],
@@ -223,13 +211,27 @@
                 const storedAppointments = localStorage.getItem("appointments");
                 if (storedAppointments) {
                     this.bookedAppointments = JSON.parse(storedAppointments);
+                    this.checkUpcomingAppointment(); 
                 } else {
                     this.bookedAppointments = [];
+                }
+            },
+
+            checkUpcomingAppointment() {
+                const now = new Date();
+                const upcomingAppointment = this.bookedAppointments.filter((appointment) => new Date(appointment.date) > now).sort((a, b) => new Date(a.date) - new Date(b.date))[0]; // Get the earliest upcoming appointment
+
+                if (upcomingAppointment) {
+                    this.upcomingAppointment = upcomingAppointment;
+                    setTimeout(() => {
+                        this.showSnackbar();
+                    }, 5000); 
                 }
             },
         },
         mounted() {
             this.loadAppointments();
+            this.checkUpcomingAppointment();
         },
     };
 </script>

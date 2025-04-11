@@ -40,19 +40,19 @@
                     {
                         id: 1,
                         name: "Library",
-                        description: "A library built with Vue and Vuetify.",
+                        description: "A library built with Vue and Vuetify. This allows the user to search, add, edit, and remove books.",
                         image: "https://cdn-icons-png.flaticon.com/512/10278/10278270.png",
                     },
                     {
                         id: 2,
                         name: "Dashboard",
-                        description: "A dashboard built with Vue and Vuetify.",
+                        description: "A dashboard constructed with Vue and Vuetify. This dashboard displays the date, time, weather, and temperature. Highlights of the office, including future vacations, public holidays, and corporate updates (searchable). Includes charts created using ApexCharts and Chart.js as well.",
                         image: "https://static.vecteezy.com/system/resources/previews/048/734/931/non_2x/dashboard-colored-outline-icon-icon-related-to-overview-data-analytics-elements-illustration-vector.jpg",
                     },
                     {
                         id: 3,
                         name: "Appointment System",
-                        description: "A dental appointment system built with Vue and Vuetify.",
+                        description: "An appointment scheduling system for dentists created with Vue and Vuetify. The user can look through services, check available dates, and make an appointment. The dentist has the ability to see, search, and remove the list of all appointments.",
                         image: "https://cdn-icons-png.flaticon.com/512/10634/10634599.png",
                     },
                 ],
