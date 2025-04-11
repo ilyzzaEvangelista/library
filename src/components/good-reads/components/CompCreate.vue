@@ -51,7 +51,7 @@
                     <v-divider></v-divider>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn class="text-capitalized" color="#1A237E" :loading="loading" :disabled="loading" dark type="submit" small>
+                        <v-btn class="text-capitalized" color="#1A237E" :loading="loading" dark type="submit" small>
                             {{ book ? 'Update Book' : 'Add Book' }}
                         </v-btn>
                     </v-card-actions>

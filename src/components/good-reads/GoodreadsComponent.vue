@@ -179,11 +179,15 @@
                 this.editDialog = false;
             },
             removeBook(book) {
-                const index = this.books.indexOf(book);
-                if (index !== -1) {
-                    this.books.splice(index, 1);
-                    this.saveBooksToLocalStorage(); 
-                }
+                this.loading = true;
+                setTimeout(() =>{
+                    const index = this.books.indexOf(book);
+                    if (index !== -1) {
+                        this.books.splice(index, 1);
+                        this.saveBooksToLocalStorage(); 
+                    }
+                    this.loading = false;
+                }, 3000);
             },
             onEditFileChange(event) {
                 const file = event.target.files[0];
