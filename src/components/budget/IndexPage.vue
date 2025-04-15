@@ -13,7 +13,7 @@
                 <v-col cols="12" class="d-flex flex-column align-center justify-center text-center">
                     <p style="color: #388e3c; font-size: 50px; font-weight: 700;">Simple way</p>
                     <p style="font-size: 50px;">to manage <span style="color: #388e3c; font-weight: 700;">personal finances</span></p>
-                    <v-btn class="white--text text-capitalized" large color="#43A047">Register</v-btn>
+                    <!-- <v-btn class="white--text text-capitalized" large color="#43A047">Register</v-btn> -->
                 </v-col>
             </v-row>
         </v-container>

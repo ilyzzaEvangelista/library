@@ -22,10 +22,10 @@
 
                 <v-divider></v-divider>
 
-                <v-card-text>
+                <v-card-text class="mt-5">
                     <v-form ref="form" @submit.prevent="loginUser">
-                        <v-text-field v-model="email" label="Email" type="email" outlined dense required />
-                        <v-text-field v-model="password" label="Password" type="password" outlined dense required />
+                        <v-text-field v-model="email" type="email" placeholder="type admin@email.com" outlined dense required />
+                        <v-text-field v-model="password" type="password" placeholder="type admin123" outlined dense required />
                         <v-btn class="white--text text-capitalized" type="submit" width="100" color="#388E3C">Login</v-btn>
                     </v-form>
                 </v-card-text>

@@ -5,10 +5,13 @@
             <AppBar @scrollToContact="scrollToContact" @scrollToHome="scrollToHome" @scrollToCertificates="scrollToCertificates" />
 
             <div class="profile-header" v-if="!selectedProject">
-                <img :src="user.avatar" alt="User Avatar" class="profile-avatar" />
-                <h2 class="user-name">{{ user.name }}</h2>
-                <p class="user-email">{{ user.email }}</p>
+                <!-- <img :src="user.avatar" alt="User Avatar" class="profile-avatar" /> -->
+                <div class="text-info">
+                    <h2 class="user-name">{{ user.name }}</h2>
+                    <p class="user-email">{{ user.email }}</p>
+                </div>
             </div>
+            
             <hr class="divider" />
 
             <!-- Main Content -->
@@ -99,13 +102,13 @@
         padding: 4px;
     }
     .user-name {
-        font-size: 1.8rem;
+        font-size: 5rem;
         font-weight: bold;
         margin-top: 10px;
         color: #000000;
     }
     .user-email {
-        font-size: 1rem;
-        color: #e91e63;
+        font-size: 2rem;
+        color: #FF4081;
     }
 </style>
