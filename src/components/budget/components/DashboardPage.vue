@@ -1,6 +1,6 @@
 <template>
   <div>
-      <v-dialog v-model="dashboardDialog" scrollable fullscreen :overlay="false" max-width="500px" @click:outside="false" transition="dialog-transition">
+      <v-dialog v-model="dashboardDialog" scrollable fullscreen :overlay="false" max-width="500px">
           <v-card>
               <v-card-title class="pa-0">
                   <v-toolbar class="elevation-0">
@@ -23,15 +23,32 @@
               <v-divider></v-divider>
 
               <v-card-text>
+                  <v-row class="pa-5">
+                      <v-col cols="6">
+                          <v-card class="pa-5" elevation="1">
+                              <v-snackbar v-model="snackbar" color="red lighten-1" timeout="3000" top>
+                                  {{ snackbarMessage }}
+                              </v-snackbar>
+                              <v-text-field v-model="savingsGoal" label="Enter Your Savings Goal" outlined dense type="number" class="mt-5" />
+                              <canvas ref="chartCanvas" height="100"></canvas>
+                          </v-card>
+                      </v-col>
+                      <v-col cols="6">
+                          <v-card class="pa-5" elevation="1">
+                              <p>Income and Expenses History</p>
+                              <canvas ref="incomeExpenseCanvas" height="100" style="margin-top: 60px;"></canvas>
+                          </v-card>
+                      </v-col>
+                  </v-row>
                   <div class="d-flex justify-center align-end pa-5">
                       <v-spacer></v-spacer>
-                      <v-btn class="text-capitalized white--text" small color="#388E3C"  @click="showTransactionDialog = true">Add Transaction</v-btn>
+                      <v-btn class="text-capitalized white--text" small color="#388E3C" @click="showTransactionDialog = true">Add Transaction</v-btn>
                       <AddTransaction v-model="showTransactionDialog" :transaction="selectedTransaction" @save="handleSaveTransaction" />
                   </div>
                   <v-data-table :headers="headers" :items="paginatedTransactions" class="elevation-1" hide-default-footer>
                       <template v-slot:[`item.actions`]="{ item }">
                           <v-btn class="text-capitalized white--text" small color="#388E3C" @click="editTransaction(item)">Update</v-btn>
-                          <v-btn class="text-capitalized white--text ml-5" small color="red ighten-1" @click="deleteTransaction(item)">Delete</v-btn>
+                          <v-btn class="text-capitalized white--text ml-5" small color="red lighten-1" @click="deleteItem(item)">Delete</v-btn>
                       </template>
                   </v-data-table>
                   <v-pagination v-model="page" :length="pageCount" color="#388E3C" class="mt-4"></v-pagination>
@@ -44,6 +61,7 @@
 <script>
   import firebase from "firebase";
   import AddTransaction from "./AddTransaction.vue";
+  import Chart from "chart.js";
   export default {
       components: { AddTransaction },
       data() {
@@ -60,6 +78,12 @@
               selectedTransaction: null,
               showTransactionDialog: false,
               transactions: [],
+              savingsGoal: 3000,
+              chartInstance: null,
+              incomeExpenseChart: null,
+              snackbar: false, // Controls snackbar visibility
+              snackbarMessage: "", // Stores the message to be displayed in the snackbar
+              snackbarColor: "red lighten-1",
           };
       },
       computed: {
@@ -70,9 +94,17 @@
           pageCount() {
               return Math.ceil(this.transactions.length / this.itemsPerPage);
           },
+          totalExpenses() {
+              return this.transactions.reduce((sum, t) => sum + Number(t.amount), 0);
+          },
       },
       mounted() {
           this.fetchTransactions();
+          this.renderIncomeExpenseChart(); //
+      },
+      watch: {
+          savingsGoal: "renderChart",
+          transactions: "renderChart",
       },
       methods: {
           close() {
@@ -93,6 +125,8 @@
                       this.transactions = [];
                   }
               });
+              this.$nextTick(() => this.renderChart());
+              this.$nextTick(() => this.renderIncomeExpenseChart());
           },
           handleAddTransaction(transaction) {
               const newRef = firebase.database().ref("transactions").push();
@@ -122,7 +156,7 @@
               this.selectedTransaction = { ...item }; // set transaction for editing
               this.showTransactionDialog = true;
           },
-          deleteTransaction(transaction) {
+          deleteItem(transaction) {
               this.$swal({
                   title: "Are you sure?",
                   text: "This transaction will be permanently deleted.",
@@ -134,12 +168,124 @@
               }).then((result) => {
                   if (result.isConfirmed) {
                       const transactionId = transaction.id;
+
+                      // Perform the deletion operation
                       firebase
                           .database()
                           .ref("transactions/" + transactionId)
-                          .remove();
-                      this.$toast.success("Item Removed!");
+                          .remove()
+                          .then(() => {
+                              // Update the transactions array locally (without affecting modal state)
+                              this.transactions = this.transactions.filter((t) => t.id !== transactionId);
+                              this.$toast.success("Item Removed!");
+
+                              // Ensure modal state isn't being changed unintentionally
+                              // You can log `this.dashboardDialog` here to make sure it's unchanged
+                          })
+                          .catch((error) => {
+                              this.$toast.error("Failed to delete item", error);
+                          });
                   }
+              });
+          },
+
+          renderChart() {
+              if (!this.$refs.chartCanvas) return;
+
+              if (this.chartInstance) {
+                  this.chartInstance.destroy();
+              }
+
+              const ctx = this.$refs.chartCanvas.getContext("2d");
+
+              const expenses = this.totalExpenses;
+              const goal = Number(this.savingsGoal);
+              const remaining = Math.max(goal - expenses, 0);
+
+              // 🔔 Set warning message if expenses > 1.5 * remaining
+              if (expenses > remaining * 1.5 && goal > 0) {
+                  this.snackbarMessage = `⚠️ Warning: You only have approximately ₱${remaining} left in your savings.`;
+                  this.snackbarColor = "red lighten-1"; // Set the color to red
+                  this.snackbar = true; // Show the snackbar
+              } else {
+                  this.snackbarMessage = "";
+                  this.snackbar = false; // Hide the snackbar
+              }
+
+              this.chartInstance = new Chart(ctx, {
+                  type: "doughnut",
+                  data: {
+                      labels: ["Expenses", "Remaining"],
+                      datasets: [
+                          {
+                              data: [expenses, remaining],
+                              backgroundColor: ["#EF5350", "#66BB6A"],
+                              hoverOffset: 10,
+                          },
+                      ],
+                  },
+                  options: {
+                      responsive: true,
+                      plugins: {
+                          title: {
+                              display: true,
+                              text: `Savings Goal: ₱${goal} — Left: ₱${remaining}`,
+                              font: { size: 18 },
+                          },
+                          tooltip: {
+                              callbacks: {
+                                  label: (context) => `₱${context.raw}`,
+                              },
+                          },
+                      },
+                  },
+              });
+          },
+
+          renderIncomeExpenseChart() {
+              if (!this.$refs.incomeExpenseCanvas) return;
+
+              if (this.incomeExpenseChart) {
+                  this.incomeExpenseChart.destroy();
+              }
+
+              const ctx = this.$refs.incomeExpenseCanvas.getContext("2d");
+
+              this.incomeExpenseChart = new Chart(ctx, {
+                  type: "bar",
+                  data: {
+                      labels: ["Jan", "Feb", "Mar"],
+                      datasets: [
+                          {
+                              label: "Income",
+                              data: [4000, 4200, 3900],
+                              backgroundColor: "#4CAF50",
+                          },
+                          {
+                              label: "Expenses",
+                              data: [3200, 3000, 3500],
+                              backgroundColor: "#EF5350",
+                          },
+                      ],
+                  },
+                  options: {
+                      responsive: true,
+                      plugins: {
+                          title: {
+                              display: true,
+                              text: "Monthly Income vs Expenses",
+                              font: { size: 18 },
+                          },
+                      },
+                      scales: {
+                          y: {
+                              beginAtZero: true,
+                              ticks: {
+                                  callback: (value) => `₱${value}`,
+                              },
+                          },
+                      },
+                  },
               });
           },
       },
