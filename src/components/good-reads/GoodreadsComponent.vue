@@ -19,7 +19,7 @@
             </v-row>
         </section>
 
-        <section class="book-list">
+        <section class="book-list mb-5">
             <v-data-table :headers="headers" :items="paginatedBooks" :loading="loading" item-value="title" class="elevation-1" hide-default-footer>
                 <template v-slot:[`item.image`]="{ item }">
                     <v-btn class="text-capitalized" small v-if="item.image" text @click="viewImage(item.image)">
@@ -68,6 +68,19 @@
                 </v-card>
             </v-dialog>
         </section>
+
+        <v-footer app>
+            <v-row>
+                <v-col class="text-center" cols="12">
+                    <v-icon>mdi-facebook</v-icon>
+                    <v-icon>mdi-instagram</v-icon>
+                    <v-icon>mdi-twitter</v-icon>
+                </v-col>
+                <v-col class="text-center" cols="12">
+                    <span>&copy; 2025 Your Company. All rights reserved.</span>
+                </v-col>
+            </v-row>
+        </v-footer>
     </div>
 </template>
 

@@ -23,6 +23,7 @@
                     <router-view to="/library" v-if="selectedProject?.name === 'Library'"></router-view>
                     <router-view to="/dashboard" v-if="selectedProject?.name === 'Dashboard'"></router-view>
                     <router-view to="/dental" v-if="selectedProject?.name === 'Appointment System'"></router-view>
+                    <router-view to="/budget-tracker" v-if="selectedProject?.name === 'Budget Tracker'"></router-view>
                 </div>
             </div>
         </v-container>
@@ -55,6 +56,12 @@
                         description: "An appointment scheduling system for dentists created with Vue and Vuetify. The user can look through services, check available dates, and make an appointment. The dentist has the ability to see, search, and remove the list of all appointments.",
                         image: "https://cdn-icons-png.flaticon.com/512/10634/10634599.png",
                     },
+                    {
+                        id: 4,
+                        name: "Budget Tracker",
+                        description: "Add expenses, categorize them, and track spending. Use charts (via Chart.js) for visual summaries. Firebase for user auth and storing expense data.",
+                        image: "https://img.freepik.com/premium-vector/expense-tracker-icons-monthly-daily-spending-management_1256803-16852.jpg",
+                    },
                 ],
                 selectedProject: null,
                 breadcrumbs: [{ text: "Home", disabled: false, link: "/" }],
@@ -75,6 +82,8 @@
                     this.$router.push("/dashboard");
                 }else if(project.name === "Library" && this.$route.path !== "/library"){
                     this.$router.push("/library");
+                }else if(project.name === "Budget Tracker" && this.$route.path !== "/budget-tracker"){
+                    this.$router.push("/budget-tracker");
                 }
             },
             resetCrumbs() {

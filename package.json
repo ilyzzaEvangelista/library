@@ -24,13 +24,17 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.21.2",
+    "firebase": "^8.10.1",
     "jquery": "^3.7.1",
+    "sweetalert2": "^11.18.0",
     "v-calendar": "^2.4.2",
     "vue": "^2.6.14",
     "vue-chartjs": "^3.5.1",
     "vue-router": "^3.6.5",
+    "vue-sweetalert2": "^5.0.11",
     "vue-toastification": "^1.7.14",
-    "vuetify": "^2.7.2"
+    "vuetify": "^2.7.2",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -38,14 +42,11 @@
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
-    "autoprefixer": "^10.4.21",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "gh-pages": "^6.3.0",
-    "postcss": "^8.5.3",
     "sass": "^1.86.0",
     "sass-loader": "^16.0.5",
-    "tailwindcss": "^4.0.15",
     "vue-loader": "^17.4.2",
     "vue-template-compiler": "^2.6.14"
   },
