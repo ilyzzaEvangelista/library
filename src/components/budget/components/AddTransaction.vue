@@ -12,8 +12,10 @@
                 </v-toolbar-items>
             </v-card-title>
             <v-card-text>
-                <v-text-field v-model="form.description" label="Description" outlined dense />
-                <v-text-field v-model="form.amount" label="Amount" type="number" outlined dense />
+                <v-form ref="form">
+                    <v-text-field v-model="form.description" label="Description" outlined dense />
+                    <v-text-field v-model="form.amount" label="Amount" type="number" outlined dense />
+                </v-form>
             </v-card-text>
             <v-card-actions>
                 <v-spacer />
@@ -70,6 +72,7 @@
                     id: this.transaction?.id || null,
                 };
                 this.$emit("save", payload);
+                this.$refs.form.reset();
                 this.dialog = false;
             },
         },

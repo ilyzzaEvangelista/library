@@ -170,35 +170,6 @@
                 </v-col>
             </v-row>
         </v-container>
-
-        <!-- Charts -->
-        <v-container class="fill-height pa-10 mt-10">
-            <v-row align="center" justify="center">
-                <!-- Left: Text -->
-                <v-col cols="12" lg="6" xl="6">
-                    <v-row>
-                        <v-col cols="6" class="text-center">
-                            <div class="font-weight-medium mb-2">Income</div>
-                            <div class="text-primary text-h6 mb-2">158,315,426 ₫</div>
-                            <doughnut-chart :data="incomeData" :options="chartOptions" />
-                        </v-col>
-                        <v-col cols="6" class="text-center">
-                            <div class="font-weight-medium mb-2">Expenses</div>
-                            <div class="text-error text-h6 mb-2">146,257,301 ₫</div>
-                            <doughnut-chart :data="expenseData" :options="chartOptions" />
-                        </v-col>
-                    </v-row>
-                </v-col>
-        
-                <!-- Right: Charts -->
-                <v-col cols="12" lg="6" xl="6" class="text-center text-lg-left">
-                    <div class="text-h3 font-weight-bold mb-2">The whole picture in one place</div>
-                    <div class="text-body-1 grey--text">
-                        Lorem ipsum dolor sit amet consectetur adipiscing elit id cras enim egestas tellus eu accumsan himenaeos
-                    </div>
-                </v-col>
-            </v-row>
-        </v-container>
         
         <!-- Feedback -->
         <v-container fluid class="fill-height pa-10 mt-5">
@@ -300,20 +271,11 @@
 </template>
 
 <script>
-    import { Doughnut } from "vue-chartjs";
-    import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
     import LoginPage from "./views/LoginPage.vue";
 
     export default {
         components: {
             LoginPage,
-            DoughnutChart: {
-                extends: Doughnut,
-                props: ["data", "options"],
-                mounted() {
-                    this.renderChart(this.data, this.options);
-                },
-            },
         },
         data() {
             return {
@@ -360,36 +322,7 @@
                             "Lorem ipsum dolor sit amet consectetur adipiscing elit id cras enim egestas tellus eu accumsan himenaeos, platea non imperdiet cubilia suscipit molestie at quisque mus aenean dictum tempor felis.",
                     },
                 ],
-                incomeData: {
-                    labels: ["Salary", "Freelance", "Other"],
-                    datasets: [
-                        {
-                            data: [120000000, 30000000, 8315426],
-                            backgroundColor: ["#1976d2", "#64b5f6", "#ffd600"],
-                            borderWidth: 2,
-                        },
-                    ],
-                },
-                expenseData: {
-                    labels: ["Food", "Shopping", "Bills", "Travel", "Other"],
-                    datasets: [
-                        {
-                            data: [50000000, 30000000, 25000000, 20000000, 21257301],
-                            backgroundColor: ["#e57373", "#ffb74d", "#81c784", "#4fc3f7", "#a1887f"],
-                            borderWidth: 2,
-                        },
-                    ],
-                },
-                chartOptions: {
-                    cutout: "70%",
-                    plugins: {
-                        legend: { display: false },
-                    },
-                },
             };
-        },
-        beforeMount() {
-            Chart.register(ArcElement, Tooltip, Legend);
         },
     };
 </script>
