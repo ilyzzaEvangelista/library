@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <v-container fluid class="cert-container">
+        <v-container fluid class="pa-10">
             <v-card class="main-card" flat>
                 <v-row>
                     <!-- Certificates Section -->

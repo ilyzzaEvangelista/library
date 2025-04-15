@@ -11,8 +11,8 @@
                         </template>
                     </v-breadcrumbs>
 
-                    <v-row v-if="!selectedProject" class="ml-5">
-                        <v-col v-for="project in projects" :key="project.id" cols="12" md="4">
+                    <v-row v-if="!selectedProject" class="ml-2">
+                        <v-col v-for="project in projects" :key="project.id" cols="12" md="3">
                             <v-card @click="selectProject(project)" class="full-card">
                                 <v-img :src="project.image" class="project-image mt-10" contain elevation-1 />
                                 <v-card-title class="project-title">{{ project.name }}</v-card-title>
@@ -112,11 +112,12 @@
         height: 1px;
         background: #ddd;
     }
-    .projects-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #2196f3;
-        margin-bottom: 10px;
+    .project-title {
+        font-size: 1rem; /* was 1.2rem */
+    }
+    
+    .project-desc {
+        font-size: 0.75rem; /* was 0.9rem */
     }
     .project-card {
         border-radius: 12px;
@@ -127,15 +128,9 @@
         transform: translateY(-5px);
     }
     .project-image {
-        width: 100%;
-        max-height: 150px;
-        object-fit: cover; 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 10px;
+        max-height: 100px; /* reduced from 150px */
+        margin-top: 5px;   /* reduced margin */
     }
-
     .project-title {
         font-size: 1.2rem;
         font-weight: bold;
@@ -144,15 +139,11 @@
         flex-direction: column;
         align-items: center;
     }
-    .project-desc {
-        font-size: 0.9rem;
-        color: #555;
-    }
 
     .full-card {
         height: 100%;
-        display: flex;
-        flex-direction: column;
+        padding: 10px; /* added padding */
+        gap: 5px; /* optional: for better spacing between items */
     }    
 
     .full-card:hover {

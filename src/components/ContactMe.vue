@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <!-- <v-app> -->
-        <v-container fluid class="contact-container">
+        <v-container fluid class="pa-10">
             <v-card class="pa-5 contact-card" flat>
                 <h2 class="contact-title">Contact Me</h2>
                 <p class="contact-subtitle">
