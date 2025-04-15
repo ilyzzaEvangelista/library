@@ -71,7 +71,7 @@
             </v-row>
 
             <!-- Third Row: Employees & Attendance -->
-            <v-row>
+            <v-row class="mb-5">
                 <v-col cols="12" md="6">
                     <v-card class="dashboard-card pb-5">
                         <v-card-title>Sales Chart using Chart.js</v-card-title>
@@ -88,6 +88,19 @@
                     </v-card>
                 </v-col>
             </v-row>
+
+            <v-footer app>
+                <v-row>
+                    <v-col class="text-center" cols="12">
+                        <v-icon>mdi-facebook</v-icon>
+                        <v-icon>mdi-instagram</v-icon>
+                        <v-icon>mdi-twitter</v-icon>
+                    </v-col>
+                    <v-col class="text-center" cols="12">
+                        <span>&copy; 2025 Your Company. All rights reserved.</span>
+                    </v-col>
+                </v-row>
+            </v-footer>
         </v-container>
     </v-app>
 </template>
