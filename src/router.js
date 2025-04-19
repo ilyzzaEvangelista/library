@@ -4,6 +4,7 @@ import DentalMain from "./components/dental/DentalMain.vue";
 import VueDashboard from "./components/dashboard/VueDashboard.vue";
 import GoodreadsComponent from "./components/good-reads/GoodreadsComponent.vue";
 import HomePage from "./components/budget/IndexPage.vue";
+import InventoryMain from "./components/inventory/inventoryMain.vue"
 Vue.use(VueRouter);
 
 const routes = [
@@ -11,6 +12,7 @@ const routes = [
   { path: "/dashboard", component: VueDashboard },
   { path: "/library", component: GoodreadsComponent },
   { path: "/budget-tracker", component: HomePage },
+  { path: "/inventory", component: InventoryMain },
 ];
 
 const router = new VueRouter({
