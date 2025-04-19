@@ -24,6 +24,7 @@
                     <router-view to="/dashboard" v-if="selectedProject?.name === 'Dashboard'"></router-view>
                     <router-view to="/dental" v-if="selectedProject?.name === 'Appointment System'"></router-view>
                     <router-view to="/budget-tracker" v-if="selectedProject?.name === 'Budget Tracker'"></router-view>
+                    <router-view to="/inventory" v-if="selectedProject?.name === 'Inventory System'"></router-view>
                 </div>
             </div>
         </v-container>
@@ -62,6 +63,12 @@
                         description: "Add expenses, categorize them, and track spending. Use charts (via Chart.js) for visual summaries. Firebase for user auth and storing expense data.",
                         image: "https://img.freepik.com/premium-vector/expense-tracker-icons-monthly-daily-spending-management_1256803-16852.jpg",
                     },
+                    {
+                        id: 5,
+                        name: "Inventory System",
+                        description: "Add item, categorize them, and track spending. Use charts (via Chart.js) for visual summaries. Firebase for user auth and storing expense data.",
+                        image: "https://cdn-icons-png.flaticon.com/512/10469/10469240.png",
+                    },
                 ],
                 selectedProject: null,
                 breadcrumbs: [{ text: "Home", disabled: false, link: "/" }],
@@ -84,6 +91,8 @@
                     this.$router.push("/library");
                 }else if(project.name === "Budget Tracker" && this.$route.path !== "/budget-tracker"){
                     this.$router.push("/budget-tracker");
+                }else if(project.name === "Inventory System" && this.$route.path !== "/inventory"){
+                    this.$router.push("/inventory");
                 }
             },
             resetCrumbs() {
