@@ -1,108 +1,110 @@
 <template>
-    <v-app>
-        <v-container fluid  style="background: #ffffff;">
-            <v-app-bar app color="primary" dark>
-                <v-toolbar-title>DASHBOARD</v-toolbar-title>
-            </v-app-bar>
-    
-            <!-- Greetings & Weather -->
-            <v-row>
-                <v-col cols="12">
-                    <v-card class="dashboard-container">
-                        <v-row>
-                            <v-col cols="6">
-                                <v-card-text class="header-content mb-3">
-                                    <!-- Greeting Section -->
-                                    <div class="greeting">
-                                        <span class="text-h4 font-weight-bold">{{ greeting }}! 👋</span>
-                                    </div>
+    <div>
+        <v-app>
+            <v-container fluid  style="background: #ffffff;">
+                <v-app-bar app color="primary" dark>
+                    <v-toolbar-title>DASHBOARD</v-toolbar-title>
+                </v-app-bar>
+        
+                <!-- Greetings & Weather -->
+                <v-row>
+                    <v-col cols="12">
+                        <v-card class="dashboard-container">
+                            <v-row>
+                                <v-col cols="6">
+                                    <v-card-text class="header-content mb-3">
+                                        <!-- Greeting Section -->
+                                        <div class="greeting">
+                                            <span class="text-h4 font-weight-bold">{{ greeting }}! 👋</span>
+                                        </div>
 
-                                    <!-- Date & Weather Info -->
-                                    <div class="details">
-                                        <v-icon class="icon">mdi-calendar-today</v-icon>
-                                        <span class="text-body-1">{{ currentDate }}</span>
+                                        <!-- Date & Weather Info -->
+                                        <div class="details">
+                                            <v-icon class="icon">mdi-calendar-today</v-icon>
+                                            <span class="text-body-1">{{ currentDate }}</span>
 
-                                        <v-icon class="icon">mdi-weather-partly-cloudy</v-icon>
-                                        <span class="text-body-1">{{ weather.description }}, {{ weather.temp }}°C</span>
-                                    </div>
+                                            <v-icon class="icon">mdi-weather-partly-cloudy</v-icon>
+                                            <span class="text-body-1">{{ weather.description }}, {{ weather.temp }}°C</span>
+                                        </div>
 
-                                    <!-- Quick Updates -->
-                                    <div v-if="upcomingLeave || companyUpdate" class="quick-updates">
-                                        <v-chip v-if="upcomingLeave" color="red" dark>
-                                            📆 Upcoming Leave: {{ upcomingLeave }}
-                                        </v-chip>
+                                        <!-- Quick Updates -->
+                                        <div v-if="upcomingLeave || companyUpdate" class="quick-updates">
+                                            <v-chip v-if="upcomingLeave" color="red" dark>
+                                                📆 Upcoming Leave: {{ upcomingLeave }}
+                                            </v-chip>
 
-                                        <v-chip v-if="companyUpdate" color="blue" dark>
-                                            🏢 {{ companyUpdate }}
-                                        </v-chip>
-                                    </div>
-                                </v-card-text>
+                                            <v-chip v-if="companyUpdate" color="blue" dark>
+                                                🏢 {{ companyUpdate }}
+                                            </v-chip>
+                                        </div>
+                                    </v-card-text>
 
-                                <v-divider></v-divider>
-                                <v-col cols="12">
-                                    <v-card-title class="text-h5 font-weight-bold">🌟 Today's Highlights</v-card-title>
-                                    <TodaysHightlights/>
-                                </v-col>
-                            </v-col>
-                            <v-col cols="6">
-                                <v-col cols="12">
-                                    <v-card-title class="text-h5 font-weight-bold">📊 Company Updates</v-card-title>
+                                    <v-divider></v-divider>
                                     <v-col cols="12">
-                                        <AnnouncementChart />
+                                        <v-card-title class="text-h5 font-weight-bold">🌟 Today's Highlights</v-card-title>
+                                        <TodaysHightlights/>
                                     </v-col>
                                 </v-col>
-                            </v-col>
-                        </v-row>
-                    </v-card>
-                </v-col>
-            </v-row>
-
-            <v-row>
-                <v-col cols="12">
-                    <v-card class="pa-3" elevation="1">
-                        <v-card-title>
-                            <v-spacer></v-spacer>
-                            <h4>Charts using Apexcharts</h4>
-                            <v-spacer></v-spacer>
-                        </v-card-title>
-                        <CardList />
-                    </v-card>
-                </v-col>    
-            </v-row>
-
-            <!-- Third Row: Employees & Attendance -->
-            <v-row class="mb-5">
-                <v-col cols="12" md="6">
-                    <v-card class="dashboard-card pb-5">
-                        <v-card-title>Sales Chart using Chart.js</v-card-title>
-                        <v-divider></v-divider>
-                        <ListofEmployees />
-                    </v-card>
-                </v-col>
-
-                <v-col cols="12" md="6">
-                    <v-card class="dashboard-card pb-5">
-                        <v-card-title>Attendance Chart using Apexcharts </v-card-title>
-                        <v-divider></v-divider>
-                        <AttendanceChart />
-                    </v-card>
-                </v-col>
-            </v-row>
-
-            <v-footer app>
-                <v-row>
-                    <v-col class="text-center" cols="12">
-                        <v-icon>mdi-facebook</v-icon>
-                        <v-icon>mdi-instagram</v-icon>
-                        <v-icon>mdi-twitter</v-icon>
-                    </v-col>
-                    <v-col class="text-center" cols="12">
-                        <span>&copy; 2025 Your Company. All rights reserved.</span>
+                                <v-col cols="6">
+                                    <v-col cols="12">
+                                        <v-card-title class="text-h5 font-weight-bold">📊 Company Updates</v-card-title>
+                                        <v-col cols="12">
+                                            <AnnouncementChart />
+                                        </v-col>
+                                    </v-col>
+                                </v-col>
+                            </v-row>
+                        </v-card>
                     </v-col>
                 </v-row>
-            </v-footer>
-        </v-container>
-    </v-app>
+
+                <v-row>
+                    <v-col cols="12">
+                        <v-card class="pa-3" elevation="1">
+                            <v-card-title>
+                                <v-spacer></v-spacer>
+                                <h4>Charts using Apexcharts</h4>
+                                <v-spacer></v-spacer>
+                            </v-card-title>
+                            <CardList />
+                        </v-card>
+                    </v-col>    
+                </v-row>
+
+                <!-- Third Row: Employees & Attendance -->
+                <v-row class="mb-5">
+                    <v-col cols="12" md="6">
+                        <v-card class="dashboard-card pb-5">
+                            <v-card-title>Sales Chart using Chart.js</v-card-title>
+                            <v-divider></v-divider>
+                            <ListofEmployees />
+                        </v-card>
+                    </v-col>
+
+                    <v-col cols="12" md="6">
+                        <v-card class="dashboard-card pb-5">
+                            <v-card-title>Attendance Chart using Apexcharts </v-card-title>
+                            <v-divider></v-divider>
+                            <AttendanceChart />
+                        </v-card>
+                    </v-col>
+                </v-row>
+
+                <v-footer app>
+                    <v-row>
+                        <v-col class="text-center" cols="12">
+                            <v-icon>mdi-facebook</v-icon>
+                            <v-icon>mdi-instagram</v-icon>
+                            <v-icon>mdi-twitter</v-icon>
+                        </v-col>
+                        <v-col class="text-center" cols="12">
+                            <span>&copy; 2025 Your Company. All rights reserved.</span>
+                        </v-col>
+                    </v-row>
+                </v-footer>
+            </v-container>
+        </v-app>
+    </div>
 </template>
 
 <script>
