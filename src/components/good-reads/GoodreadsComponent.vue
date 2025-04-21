@@ -1,12 +1,10 @@
 <template>
-    <div id="app">
-        <v-app-bar app color="indigo" dark>
+    <v-container fluid style="background: #ffffff;">
+        <v-app-bar app color="primary" dark>
             <v-toolbar-title>LIST OF BOOKS</v-toolbar-title>
         </v-app-bar>
 
-        <header>
-            <h1>My Literary Journey</h1>
-        </header>
+        <h2>My Literary Journey</h2>
 
         <section>
             <v-row>
@@ -81,7 +79,7 @@
                 </v-col>
             </v-row>
         </v-footer>
-    </div>
+    </v-container>
 </template>
 
 <script>
@@ -238,9 +236,7 @@
 
 <style scoped>
     #app {
-        font-family: "Arial", sans-serif;
-        margin: 20px;
-        color: #333;
+        color: #ffffff;
     }
 
     .text-capitalized {

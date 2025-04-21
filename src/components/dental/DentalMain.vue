@@ -1,8 +1,8 @@
 <template>
-    <v-app>
+    <v-container fluid style="background: #ffffff;">
         <BookedAppointments v-if="modal" :mode="'new'" :modal="modal" v-on:btnModal="btnModal" />
         <!-- Navigation Bar -->
-        <v-app-bar app color="indigo" dark>
+        <v-app-bar app color="primary" dark>
             <v-toolbar-title>URMAZA DENTAL CLINIC</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn text @click="scrollToHome">Home</v-btn>
@@ -31,7 +31,7 @@
         </v-container>
 
         <!-- Testimonials Section -->
-        <v-container class="my-5" style="background-color: #e0e0e0;">
+        <v-container class="my-5" style="background: #ffffff;">
             <h2 class="pa-3">Customer's Feedback</h2>
             <v-row>
                 <v-col v-for="testimonial in testimonials" :key="testimonial.name" cols="12" sm="6" md="4">
@@ -107,7 +107,7 @@
                 </v-col>
             </v-row>
         </v-footer>
-    </v-app>
+    </v-container>
 </template>
 
 <script>

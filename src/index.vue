@@ -3,26 +3,42 @@
         <v-app>
             <!-- App Bar -->
             <AppBar @scrollToContact="scrollToContact" @scrollToHome="scrollToHome" @scrollToCertificates="scrollToCertificates" />
-
-            <div class="profile-header" v-if="!selectedProject">
-                <!-- <img :src="user.avatar" alt="User Avatar" class="profile-avatar" /> -->
-                <div class="text-info">
-                    <h2 class="user-name">{{ user.name }}</h2>
-                    <p class="user-email">{{ user.email }}</p>
-                </div>
-            </div>
             
-            <hr class="divider" />
+            <v-container class="fill-height" fluid style="background: #ffffff;">
+                <v-row v-if="!selectedProject" ref="homeSection" align="center" >
+                    <v-col cols="12" md="6">
+                        <div class="d-flex flex-column align-start ml-16 pl-10 pt-10">
+                            <h1 class="black--text display-2 font-weight-bold">Hi <span>👋</span>,</h1>
+                            <h1 class="black--text display-2 font-weight-bold">I’m Ilyzza,</h1>
+                            <h2 class="primary--text" style="font-size: 50px; font-weight: 600;">Front-end Developer</h2>
 
-            <!-- Main Content -->
-            <v-row>
-                <v-col cols="12">
-                    <ProjectList ref="homeSection" :setSelectedProject="setSelectedProject" />
-                    <!-- Hide these sections when a project is selected -->
-                    <CertificatesList v-if="!selectedProject" ref="certificateSection" />
-                    <ContactMe v-if="!selectedProject" ref="contactSection" />         
-                </v-col>
-            </v-row>
+                        
+                            <p class="black--text subtitle-1 mt-4">
+                                I design and develop experiences that make people's lives<br>
+                                simpler through Web and Mobile apps. I work with HTML5,<br>
+                                CSS3, JavaScript, Vue, Vuetify, and Bootstrap.
+                            </p>
+                        
+                            <div class="mt-6">
+                                <v-btn @click="scrollToProject" color="black" dark>SEE MY PROJECTS</v-btn>
+                            </div>
+                        </div>
+                    </v-col>
+                    <v-col cols="12" md="5">
+                        <v-img :src="require('@/assets/landing/profile.png')" alt="Charles working" class="mt-10" aspect-ratio="1" ></v-img>
+                    </v-col>
+                </v-row>
+
+                <v-row>
+                    <v-col cols="12">
+                        <ProjectList ref="projectSection" :setSelectedProject="setSelectedProject" />
+                        <!-- Hide these sections when a project is selected -->
+                        <CertificatesList v-if="!selectedProject" ref="certificateSection" />
+                        <ContactMe v-if="!selectedProject" ref="contactSection" />         
+                    </v-col>
+                </v-row>
+            </v-container>
+
         </v-app>
     </div>
 </template>
@@ -65,9 +81,12 @@
                 }
             },
             scrollToHome() {
-                const homeSection = this.$refs.homeSection?.$el;
-                if (homeSection) {
-                    homeSection.scrollIntoView({ behavior: "smooth" });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+            scrollToProject() {
+                const projectSection = this.$refs.projectSection?.$el;
+                if (projectSection) {
+                    projectSection.scrollIntoView({ behavior: "smooth" });
                 }
             },
             setSelectedProject(project) {
@@ -78,37 +97,51 @@
 </script>
 
 <style scoped>
-    .profile-header {
-        margin-top: 5%;
+    #app {
+        font-family: "Arial", sans-serif;
+        color: #ffffff;
+    }
+    .main-section {
+        background: #ffffff;
+        min-height: 80vh;
+    }
+    .illustration {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-    .profile-avatar {
-        width: 90px;
-        height: 90px;
-        border-radius: 50%;
-        padding: 4px; 
-        background: linear-gradient(45deg, #a5c6f7, #f48fb1); 
-        display: inline-block;
+    .btn-lg {
+        font-size: 1.25rem;
+        padding: 0.75rem 2rem;
     }
-
-    .profile-avatar img {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        display: block;
-        background: white; 
-        padding: 4px;
+    ul {
+        list-style: none;
+        padding-left: 0;
     }
-    .user-name {
-        font-size: 5rem;
+    li {
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+    .search-bar .v-input__slot {
+        border-radius: 24px;
+        background: #fff;
+    }
+    .primary--text {
+        background: linear-gradient(270deg, #F48FB1, #90CAF9, #F48FB1);
+        background-size: 600% 600%;
+        animation: gradientMove 5s ease infinite;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
         font-weight: bold;
-        margin-top: 10px;
-        color: #000000;
-    }
-    .user-email {
-        font-size: 2rem;
-        color: #FF4081;
-    }
+      }
+      
+      @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      
+      
 </style>

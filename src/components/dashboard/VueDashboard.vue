@@ -1,7 +1,7 @@
 <template>
     <v-app>
-        <v-container fluid>
-            <v-app-bar app color="indigo" dark>
+        <v-container fluid  style="background: #ffffff;">
+            <v-app-bar app color="primary" dark>
                 <v-toolbar-title>DASHBOARD</v-toolbar-title>
             </v-app-bar>
     

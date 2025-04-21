@@ -1,7 +1,7 @@
 <template>
-    <div id="app">
-        <!-- <v-app> -->
-        <v-container fluid class="pa-10">
+    <div class="pa-10 ma-16">
+        <v-divider></v-divider>
+        <v-container fluid class="pa-10"  style="background: #ffffff;">
             <v-card class="pa-5 contact-card" flat>
                 <h2 class="contact-title">Contact Me</h2>
                 <p class="contact-subtitle">
@@ -16,7 +16,6 @@
                 </v-form>
             </v-card>
         </v-container>
-        <!-- </v-app> -->
     </div>
 </template>
 
@@ -44,6 +43,11 @@
 </script>
 
 <style scoped>
+    #app {
+        font-family: "Arial", sans-serif;
+        margin: 90px;
+        color: #ffffff;
+    }
     .contact-container {
         max-width: auto;
         margin: auto;
