@@ -1,12 +1,13 @@
 <template>
-    <v-container fluid style="background: #ffffff;">
+    <v-container fluid class="fill-height" style="background: #ffffff;">
         <v-app-bar app color="primary" dark>
             <v-toolbar-title>LIST OF BOOKS</v-toolbar-title>
         </v-app-bar>
 
-        <h2>My Literary Journey</h2>
-
-        <section>
+        <v-container fluid class="book-list mb-5">
+            <div class="d-flex justify-center align-center pa-5">
+                <h1 >My Literary Journey</h1>
+            </div>
             <v-row>
                 <v-col cols="4">
                     <v-text-field v-model="searchTerm" class="mb-5" label="Search Books" append-icon="mdi-magnify" single-line hide-details outlined dense />
@@ -15,9 +16,6 @@
                     <CompCreate :book="selectedBook" @book-added="handleBookAdded" />
                 </v-col>
             </v-row>
-        </section>
-
-        <section class="book-list mb-5">
             <v-data-table :headers="headers" :items="paginatedBooks" :loading="loading" item-value="title" class="elevation-1" hide-default-footer>
                 <template v-slot:[`item.image`]="{ item }">
                     <v-btn class="text-capitalized" small v-if="item.image" text @click="viewImage(item.image)">
@@ -65,27 +63,27 @@
                     </v-card-text>
                 </v-card>
             </v-dialog>
-        </section>
 
-        <v-footer app>
-            <v-row>
-                <v-col class="text-center" cols="12">
-                    <v-icon>mdi-facebook</v-icon>
-                    <v-icon>mdi-instagram</v-icon>
-                    <v-icon>mdi-twitter</v-icon>
-                </v-col>
-                <v-col class="text-center" cols="12">
-                    <span>&copy; 2025 Your Company. All rights reserved.</span>
-                </v-col>
-            </v-row>
-        </v-footer>
+            <v-footer app style="background: #ffffff;">
+                <v-row>
+                    <v-col class="text-center" cols="12">
+                        <v-icon>mdi-facebook</v-icon>
+                        <v-icon>mdi-instagram</v-icon>
+                        <v-icon>mdi-twitter</v-icon>
+                    </v-col>
+                    <v-col class="text-center" cols="12">
+                        <span>&copy; 2025 Your Company. All rights reserved.</span>
+                    </v-col>
+                </v-row>
+            </v-footer>
+        </v-container>
     </v-container>
 </template>
 
 <script>
     import CompCreate from "./components/CompCreate.vue";
     export default {
-        name: 'GoodreadsComponent',
+        name: "GoodreadsComponent",
         components: {
             CompCreate,
         },
@@ -168,7 +166,7 @@
                     const index = this.books.findIndex((book) => book.id === updatedBook.id);
                     if (index !== -1) {
                         this.books.splice(index, 1, updatedBook);
-                        this.saveBooksToLocalStorage(); 
+                        this.saveBooksToLocalStorage();
                     }
                     this.selectedBook = null;
                     this.loading = false;
@@ -191,11 +189,11 @@
             },
             removeBook(book) {
                 this.loading = true;
-                setTimeout(() =>{
+                setTimeout(() => {
                     const index = this.books.indexOf(book);
                     if (index !== -1) {
                         this.books.splice(index, 1);
-                        this.saveBooksToLocalStorage(); 
+                        this.saveBooksToLocalStorage();
                     }
                     this.loading = false;
                 }, 3000);
@@ -214,7 +212,7 @@
                 this.loading = true;
                 setTimeout(() => {
                     this.books.unshift(bookData);
-                    this.saveBooksToLocalStorage(); 
+                    this.saveBooksToLocalStorage();
                     this.loading = false;
                 }, 3000);
             },
@@ -249,12 +247,5 @@
         text-overflow: ellipsis;
         max-width: 150px;
         display: inline-block;
-    }
-
-    header {
-        background-color: #f0f0f0;
-        padding: 10px;
-        text-align: center;
-        margin-bottom: 20px;
     }
 </style>

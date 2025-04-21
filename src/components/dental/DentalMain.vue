@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid style="background: #ffffff;">
+    <v-app style="background: #ffffff;">
         <BookedAppointments v-if="modal" :mode="'new'" :modal="modal" v-on:btnModal="btnModal" />
         <!-- Navigation Bar -->
         <v-app-bar app color="primary" dark>
@@ -14,25 +14,22 @@
         </v-app-bar>
 
         <!-- Home -->
-        <v-container class="my-5" ref="Home">
+        <v-container ref="Home">
             <v-row>
-                <v-card class="pa-5" flat>
-                    <v-row>
-                        <v-col cols="12" md="6" class="d-flex flex-column justify-center">
-                            <v-img :src="require('@/assets/dental/logo.png')" alt="Dental Clinic Image" height="500px" class="mx-auto mb-4"></v-img>
-                            <v-btn color="indigo" @click="openDialog" class="white--text text-capitalized floating-btn">Book an appointment</v-btn>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-img :src="require('@/assets/dental/banner.png')" alt="Dental Clinic Image" height="220px" class="mx-auto mt-10 mb-4"></v-img>
-                        </v-col>
-                    </v-row>
-                </v-card>
+                <v-col cols="12" md="6" class="d-flex flex-column align-center justify-center">
+                    <v-img style="max-height: 400px;" :src="require('@/assets/dental/logo.png')" alt="Dental Clinic Logo" contain></v-img>
+                </v-col>
+        
+                <v-col cols="12" md="6" class="d-flex flex-column align-center justify-center">
+                    <v-img style="max-height: 450px; margin-bottom: 10px;" :src="require('@/assets/dental/banner.png')" alt="Dental Clinic Banner" contain></v-img>
+                    <v-btn color="indigo" @click="openDialog" class="white--text mt-n10 mb-10" small>Book an appointment</v-btn>
+                </v-col>
             </v-row>
         </v-container>
-
+        
         <!-- Testimonials Section -->
         <v-container class="my-5" style="background: #ffffff;">
-            <h2 class="pa-3">Customer's Feedback</h2>
+            <h2 class="pa-3 text-center">Customer's Feedback</h2>
             <v-row>
                 <v-col v-for="testimonial in testimonials" :key="testimonial.name" cols="12" sm="6" md="4">
                     <v-card class="mx-auto" outlined>
@@ -49,30 +46,26 @@
                 </v-col>
             </v-row>
         </v-container>
-
+        
         <!-- About Us Section -->
         <v-container class="my-5" ref="whoWeAre">
             <v-row>
-                <v-card flat>
-                    <v-row>
-                        <v-col cols="12" md="6" class="d-flex flex-column justify-center">
-                            <h2 class="display-1 mb-4">Who We Are</h2>
-                            <p>{{ desc }}</p>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-img :src="require('@/assets/dental/logo.png')" alt="About Us Image"></v-img>
-                        </v-col>
-                    </v-row>
-                </v-card>
+                <v-col cols="12" md="6" class="pa-4 d-flex flex-column justify-center">
+                    <h2 class="text-h4 text-md-h3 mb-4">Who We Are</h2>
+                    <p class="black--text">{{ desc }}</p>
+                </v-col>
+                <v-col cols="12" md="6" class="pa-4">
+                    <v-img :src="require('@/assets/dental/logo.png')" alt="About Us Image" contain max-height="300"></v-img>
+                </v-col>
             </v-row>
         </v-container>
-
+        
         <!-- Contact Us -->
         <v-container class="my-5" ref="contactUs">
-            <v-card class="pa-5" flat>
+            <v-card class="pa-4" flat>
                 <v-card-title class="text-center">
                     <v-spacer></v-spacer>
-                    <h2>Contact Us</h2>
+                    <h2 class="text-h5 text-md-h4">Contact Us</h2>
                     <v-spacer></v-spacer>
                 </v-card-title>
                 <v-card-text>
@@ -80,34 +73,43 @@
                         <v-text-field v-model="name" label="Your Name" outlined dense required :rules="nameRules"></v-text-field>
                         <v-text-field v-model="email" label="Your Email" outlined dense required :rules="emailRules"></v-text-field>
                         <v-textarea v-model="message" label="Your Message" outlined dense required :rules="messageRules"></v-textarea>
-                        <v-btn :disabled="!formValid" color="indigo" type="submit" class="white--text">
+                        <v-btn :disabled="!formValid" color="indigo" type="submit" class="white--text" block>
                             Submit
                         </v-btn>
                     </v-form>
                 </v-card-text>
             </v-card>
         </v-container>
-
+        
+        <!-- Newsletter -->
         <v-container class="my-5 mb-10">
-            <h3>Subscribe to Our Newsletter</h3>
-            <v-text-field label="Enter your email" v-model="email" outlined></v-text-field>
-            <v-btn color="indigo" class="white--text">Subscribe</v-btn>
-        </v-container>
-
-        <!-- Footer -->
-        <v-footer app>
+            <h3 class="text-center text-md-left">Subscribe to Our Newsletter</h3>
             <v-row>
-                <v-col class="text-center" cols="12">
-                    <v-icon>mdi-facebook</v-icon>
-                    <v-icon>mdi-instagram</v-icon>
-                    <v-icon>mdi-twitter</v-icon>
+                <v-col cols="12" md="8">
+                    <v-text-field label="Enter your email" v-model="email" outlined dense></v-text-field>
                 </v-col>
-                <v-col class="text-center" cols="12">
-                    <span>&copy; 2025 Your Company. All rights reserved.</span>
+                <v-col cols="12" md="4">
+                    <v-btn color="indigo" class="white--text" block>Subscribe</v-btn>
                 </v-col>
             </v-row>
-        </v-footer>
-    </v-container>
+        </v-container>
+        
+        <!-- Footer -->
+        <v-footer app style="background: #ffffff;">
+            <v-container>
+                <v-row>
+                    <v-col cols="12" class="text-center">
+                        <v-icon class="mx-2">mdi-facebook</v-icon>
+                        <v-icon class="mx-2">mdi-instagram</v-icon>
+                        <v-icon class="mx-2">mdi-twitter</v-icon>
+                    </v-col>
+                    <v-col cols="12" class="text-center">
+                        <span>&copy; 2025 URMAZA Dental Clinic. All rights reserved.</span>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-footer>        
+    </v-app>
 </template>
 
 <script>
@@ -157,6 +159,9 @@
                 modal: false,
             };
         },
+        mounted(){
+            this.scrollToHome();
+        },
         methods: {
             openDialog() {
                 this.modal = true;
@@ -168,10 +173,7 @@
                 }
             },
             scrollToHome() {
-                const Home = this.$refs.Home;
-                if (Home) {
-                    Home.scrollIntoView({ behavior: "smooth", block: "start" });
-                }
+                window.scrollTo(0, 0);
             },
             scrollToContact() {
                 const contactUs = this.$refs.contactUs;
@@ -198,9 +200,7 @@
         color: black; 
     }
     .floating-btn {
-        position: absolute;
-        bottom: 180px; 
-        left: 85%;
-        transform: translateX(-50%);
+        
+        margin-top: 20px;
     }
 </style>

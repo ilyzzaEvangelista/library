@@ -70,7 +70,8 @@
 
 <script>
     import AppointmentForm from "./AppointmentForm.vue";
-
+    import firebase from "firebase/app";
+    import "firebase/database";
     export default {
         components: { AppointmentForm },
         props: {
@@ -87,7 +88,7 @@
                 loading: false,
                 searchTerm: "",
                 selectedImage: null,
-                imageDialog: false, 
+                imageDialog: false,
                 headers: [
                     { text: "Name", value: "name" },
                     { text: "Age", value: "age" },
@@ -114,22 +115,30 @@
             },
 
             filteredAppointments() {
-                return this.bookedAppointments.filter((form) => {
-                    const searchTermLower = (this.searchTerm || "").toLowerCase();
-                    const name = (form.name || "").toLowerCase();
-                    const service = (form.service || "").toLowerCase();
-                    return name.includes(searchTermLower) || service.includes(searchTermLower);
-                });
-            },
+                const term = this.searchTerm.trim().toLowerCase();
 
-            pageCount() {
-                return Math.ceil(this.filteredAppointments.length / this.itemsPerPage);
+                if (!term) return this.bookedAppointments;
+
+                return this.bookedAppointments.filter((appointment) => {
+                    const valuesToSearch = [
+                        appointment.name,
+                        appointment.age?.toString(),
+                        appointment.email,
+                        appointment.contact,
+                        appointment.service,
+                        this.formatDate(appointment.date),
+                    ];
+
+                    return valuesToSearch.some((val) => (val || "").toLowerCase().includes(term));
+                });
             },
 
             paginatedAppointments() {
                 const start = (this.page - 1) * this.itemsPerPage;
-                const end = start + this.itemsPerPage;
-                return this.filteredAppointments.slice(start, end);
+                return this.filteredAppointments.slice(start, start + this.itemsPerPage);
+            },
+            pageCount() {
+                return Math.ceil(this.filteredAppointments.length / this.itemsPerPage);
             },
         },
         watch: {
@@ -139,13 +148,41 @@
                     this.$emit("btnModal", { type: "close" });
                 }
             },
+            searchTerm() {
+                this.page = 1;
+            },
         },
+
         methods: {
             capitalizeSentence(text) {
                 return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
             },
             openDialog() {
                 this.modal = true;
+            },
+
+            fetchAppointment() {
+                this.loading = true;
+                const inventoryRef = firebase.database().ref("dental/appointment");
+                inventoryRef.on("value", (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        this.bookedAppointments = Object.entries(data).map(([id, val]) => ({
+                            id,
+                            name: val.name,
+                            age: val.age,
+                            email: val.email,
+                            contact: val.contact,
+                            service: val.service,
+                            date: val.date,
+                            image: val.image,
+                        }));
+                    } else {
+                        this.bookedAppointments = [];
+                    }
+                    this.page = 1;
+                    this.loading = false;
+                });
             },
 
             showSnackbar() {
@@ -186,52 +223,36 @@
                 }, 3000);
             },
 
-            addedAppointment(item) {
-                this.loading = true;
-                setTimeout(() => {
-                    this.bookedAppointments.unshift(item);
-                    this.loading = false;
-                }, 3000);
-            },
-
-            viewImage(image) {
-                this.selectedImage = image;
-                this.imageDialog = true;
-            },
-
             removeBook(item) {
-                const index = this.bookedAppointments.findIndex((appointment) => appointment.id === item.id);
-                if (index !== -1) {
-                    this.bookedAppointments.splice(index, 1);
-                    localStorage.setItem("appointments", JSON.stringify(this.bookedAppointments));
-                }
-            },
-
-            loadAppointments() {
-                const storedAppointments = localStorage.getItem("appointments");
-                if (storedAppointments) {
-                    this.bookedAppointments = JSON.parse(storedAppointments);
-                    this.checkUpcomingAppointment(); 
-                } else {
-                    this.bookedAppointments = [];
-                }
-            },
-
-            checkUpcomingAppointment() {
-                const now = new Date();
-                const upcomingAppointment = this.bookedAppointments.filter((appointment) => new Date(appointment.date) > now).sort((a, b) => new Date(a.date) - new Date(b.date))[0]; // Get the earliest upcoming appointment
-
-                if (upcomingAppointment) {
-                    this.upcomingAppointment = upcomingAppointment;
-                    setTimeout(() => {
-                        this.showSnackbar();
-                    }, 5000); 
-                }
+                this.$swal({
+                    title: "Are you sure?",
+                    text: "This appointment will be permanently deleted.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#8BC34A",
+                    cancelButtonColor: "#EF9A9A",
+                    confirmButtonText: "Yes, delete it!",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const transactionId = item.id;
+                        firebase
+                            .database()
+                            .ref("dental/appointment/" + transactionId)
+                            .remove()
+                            .then(() => {
+                                this.bookedAppointments = this.bookedAppointments.filter((t) => t.id !== transactionId);
+                                this.page = 1;
+                                this.$toast.success("Item Removed!");
+                            })
+                            .catch((error) => {
+                                this.$toast.error("Failed to delete item", error);
+                            });
+                    }
+                });
             },
         },
         mounted() {
-            this.loadAppointments();
-            this.checkUpcomingAppointment();
+            this.fetchAppointment();
         },
     };
 </script>

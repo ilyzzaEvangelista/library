@@ -25,7 +25,10 @@
                 </div>
 
                 <div class="pa-5">
-                    <h3 class="pa-3">My Expenses</h3>
+                    <p class="d-flex justify-start align-center black--text pa-3 bold" style="font-size: 25px; font-weight: 700;">My Expenses</p>
+                    <v-col cols="12" md="3" class="mb-4">
+                        <v-text-field v-model="searchQuery" label="Search" append-icon="mdi-magnify" single-line outlined dense hide-details></v-text-field>
+                    </v-col>
                     <v-data-table :headers="headers" :items="paginatedInventory" :loading="loading" hide-default-footer>
                         <template v-slot:loading>
                             <v-skeleton-loader type="table" />
@@ -36,7 +39,7 @@
                                 <v-btn small color="red lighten-1" class="white--text ml-2 text-capitalized" @click="deleteItem(item)">Delete</v-btn>
                             </div>
                         </template>
-                    </v-data-table>
+                    </v-data-table>                    
                     <v-pagination v-model="page" :length="pageCount" color="indigo" class="mt-4"></v-pagination>
                 </div>
                 </v-card-text>
@@ -69,17 +72,35 @@
                 itemsPerPage: 5,
                 loading: false,
                 dialog: false,
+                searchQuery: '',
             };
         },
         computed: {
             paginatedInventory() {
+                const filteredInventory = this.inventory.filter(item => {
+                    return (
+                        item.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                        item.amount.toString().includes(this.searchQuery) ||
+                        item.quantity.toString().includes(this.searchQuery)
+                    );
+                });
+                
                 const start = (this.page - 1) * this.itemsPerPage;
-                return this.inventory.slice(start, start + this.itemsPerPage);
+                return filteredInventory.slice(start, start + this.itemsPerPage);
             },
             pageCount() {
-                return Math.ceil(this.inventory.length / this.itemsPerPage);
+                const filteredInventory = this.inventory.filter(item => {
+                    return (
+                        item.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                        item.amount.toString().includes(this.searchQuery) ||
+                        item.quantity.toString().includes(this.searchQuery)
+                    );
+                });
+                
+                return Math.ceil(filteredInventory.length / this.itemsPerPage);
             },
         },
+
         mounted() {
             this.fetchInventory();
             this.fetchSales();
