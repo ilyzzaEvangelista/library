@@ -1,38 +1,36 @@
 <template>
-    <div id="app">
-        <v-container fluid class="pa-10">
-            <v-card class="main-card" flat>
-                <v-row>
-                    <!-- Certificates Section -->
-                    <v-col cols="12" md="6">
-                        <h3 class="section-title">Certificates</h3>
-                        <v-card v-for="(cert, index) in certificates" :key="index" class="cert-card" flat>
-                            <a class="certificate-title" :href="cert.link" target="_blank" rel="noopener noreferrer">
-                                {{ cert.title }}
-                            </a>
-                            <p class="certificate-subtitle ma-0">{{ cert.subtitle }}</p>
-                            <p class="certificate-source">{{ cert.source }}</p>
-                        </v-card>
-                    </v-col>
+    <v-container fluid class="pa-10">
+        <v-card class="main-card" flat>
+            <v-row>
+                <!-- Certificates Section -->
+                <v-col cols="12" md="6">
+                    <h3 class="section-title">Certificates</h3>
+                    <v-card v-for="(cert, index) in certificates" :key="index" class="cert-card" flat>
+                        <a class="certificate-title" :href="cert.link" target="_blank" rel="noopener noreferrer">
+                            {{ cert.title }}
+                        </a>
+                        <p class="certificate-subtitle ma-0">{{ cert.subtitle }}</p>
+                        <p class="certificate-source">{{ cert.source }}</p>
+                    </v-card>
+                </v-col>
 
-                    <!-- Skills Section -->
-                    <v-col cols="12" md="6">
-                        <h3 class="section-title">Skills</h3>
-                        <v-row justify="center" class="skills-container">
-                            <v-tooltip bottom v-for="(skill, index) in skills" :key="index">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-icon :color="skill.color" v-bind="attrs" v-on="on" size="50" class="skill-icon">
-                                        {{ skill.icon }}
-                                    </v-icon>
-                                </template>
-                                <span>{{ skill.label }}</span>
-                            </v-tooltip>
-                        </v-row>
-                    </v-col>
-                </v-row>
-            </v-card>
-        </v-container>
-    </div>
+                <!-- Skills Section -->
+                <v-col cols="12" md="6">
+                    <h3 class="section-title">Skills</h3>
+                    <v-row justify="center" class="skills-container">
+                        <v-tooltip bottom v-for="(skill, index) in skills" :key="index">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon :color="skill.color" v-bind="attrs" v-on="on" size="50" class="skill-icon">
+                                    {{ skill.icon }}
+                                </v-icon>
+                            </template>
+                            <span>{{ skill.label }}</span>
+                        </v-tooltip>
+                    </v-row>
+                </v-col>
+            </v-row>
+        </v-card>
+    </v-container>
 </template>
 
 <script>
@@ -67,6 +65,11 @@
 </script>
 
 <style scoped>
+    #app {
+        font-family: "Arial", sans-serif;
+        margin: 90px;
+        color: #ffffff;
+    }
     .cert-container {
         max-width: auto;
         margin: auto;

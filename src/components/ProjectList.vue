@@ -1,31 +1,32 @@
 <template>
     <div>
-        <v-container fluid class="mt-5">
+        <v-container fluid class="mt-5" style="background: #ffffff;">
             <div class="profile-container">
-                <div>
-                    <v-breadcrumbs :items="breadcrumbs" divider="/" class="my-4">
-                        <template v-slot:item="{ item }">
-                            <v-breadcrumbs-item @click="resetCrumbs" :disabled="item.disabled" class="indigo--text crumb">
-                                {{ item.text }}
-                            </v-breadcrumbs-item>
-                        </template>
-                    </v-breadcrumbs>
-
-                    <v-row v-if="!selectedProject" class="ml-2">
-                        <v-col v-for="project in projects" :key="project.id" cols="12" md="3">
-                            <v-card @click="selectProject(project)" class="full-card">
-                                <v-img :src="project.image" class="project-image mt-10" contain elevation-1 />
-                                <v-card-title class="project-title">{{ project.name }}</v-card-title>
-                                <v-card-subtitle class="project-desc">{{ project.description }}</v-card-subtitle>
-                            </v-card>
-                        </v-col>                        
-                    </v-row>
-                    <router-view to="/library" v-if="selectedProject?.name === 'Library'"></router-view>
-                    <router-view to="/dashboard" v-if="selectedProject?.name === 'Dashboard'"></router-view>
-                    <router-view to="/dental" v-if="selectedProject?.name === 'Appointment System'"></router-view>
-                    <router-view to="/budget-tracker" v-if="selectedProject?.name === 'Budget Tracker'"></router-view>
-                    <router-view to="/inventory" v-if="selectedProject?.name === 'Inventory System'"></router-view>
-                </div>
+                <v-card flat>
+                    <div>
+                        <v-breadcrumbs :items="breadcrumbs" divider="/" class="my-4 pa-10">
+                            <template v-slot:item="{ item }">
+                                <v-breadcrumbs-item @click="resetCrumbs" :disabled="item.disabled" class="indigo--text crumb">
+                                    {{ item.text }}
+                                </v-breadcrumbs-item>
+                            </template>
+                        </v-breadcrumbs>
+                        <v-row v-if="!selectedProject" class="ml-2">
+                            <v-col v-for="project in projects" :key="project.id" cols="12" md="3">
+                                <v-card @click="selectProject(project)" class="full-card">
+                                    <v-img :src="project.image" class="project-image mt-10" contain elevation-1 />
+                                    <v-card-title class="project-title">{{ project.name }}</v-card-title>
+                                    <v-card-subtitle class="project-desc">{{ project.description }}</v-card-subtitle>
+                                </v-card>
+                            </v-col>                        
+                        </v-row>
+                        <router-view to="/library" v-if="selectedProject?.name === 'Library'"></router-view>
+                        <router-view to="/dashboard" v-if="selectedProject?.name === 'Dashboard'"></router-view>
+                        <router-view to="/dental" v-if="selectedProject?.name === 'Appointment System'"></router-view>
+                        <router-view to="/budget-tracker" v-if="selectedProject?.name === 'Budget Tracker'"></router-view>
+                        <router-view to="/inventory" v-if="selectedProject?.name === 'Inventory System'"></router-view>
+                    </div>
+                </v-card>
             </div>
         </v-container>
     </div>
@@ -105,6 +106,10 @@
 </script>
 
 <style scoped>
+    #app {
+        font-family: "Arial", sans-serif;
+        color: #ffffff;
+    }
     .project-container {
         max-width: auto;
         margin: auto;
