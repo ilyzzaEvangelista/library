@@ -37,7 +37,7 @@
           return {
               dialog: false,
               chart: null,
-              filter: "Today",
+              filter: "This Month",
           };
       },
       watch: {
