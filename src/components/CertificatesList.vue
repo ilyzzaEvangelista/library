@@ -41,6 +41,7 @@
                     { icon: "mdi-vuejs", color: "success", label: "Vue.js - Progressive JavaScript Framework" },
                     { icon: "mdi-language-javascript", color: "yellow", label: "JavaScript - Programming Language of the Web" },
                     { icon: "mdi-github", color: "", label: "GitHub - Version Control & Collaboration" },
+                    { icon: "mdi-database", color: "#E65100", label: "Firebase - Realtime Database" },
                     { icon: "mdi-api", color: "blue", label: "REST API - Backend Communication" },
                     { icon: "mdi-language-css3", color: "blue", label: "CSS - Styling the Web" },
                     { icon: "mdi-bootstrap", color: "purple", label: "Bootstrap - Responsive Framework" },

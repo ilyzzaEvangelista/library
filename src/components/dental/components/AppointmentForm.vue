@@ -62,6 +62,8 @@
 
 <script>
     import { POSITION } from "vue-toastification";
+    import firebase from "firebase/app";
+    import "firebase/database";
     export default {
         props: {
             appointment: {
@@ -112,7 +114,6 @@
             },
         },
         mounted() {
-            this.loadAppointments();
             this.isAdmin();
         },
         methods: {
@@ -167,66 +168,52 @@
                 if (this.$refs.form.validate()) {
                     this.loading = true;
 
-                    setTimeout(() => {
-                        if (this.appointment) {
-                            // Update appointment based on `id` and update `date`
-                            const updatedAppointments = this.bookedAppointments.map((a) =>
-                                a.id === this.appointment.id
-                                    ? {
-                                        ...a,  // Keep the existing data
-                                        name: this.form.name || a.name,
-                                        age: this.form.age || a.age,
-                                        email: this.form.email || a.email,
-                                        contact: this.form.contact || a.contact,
-                                        service: this.form.service || a.service,
-                                        date: this.form.date || a.date,  // Update date if changed
-                                        image: this.form.image || a.image,
-                                    }
-                                    : a
-                            );
+                    const ref = firebase.database().ref("dental/appointment");
+                    const appointmentData = {
+                        name: this.form.name,
+                        age: this.form.age,
+                        email: this.form.email,
+                        contact: this.form.contact,
+                        service: this.form.service,
+                        date: this.form.date,
+                        image: this.form.image
+                    };
 
-                            this.bookedAppointments = updatedAppointments;
-                            localStorage.setItem("appointments", JSON.stringify(this.bookedAppointments));
-                            this.$emit("appointment-updated", updatedAppointments);
-
-                            this.$toast.success("Successfully updated appointment!", {
-                                position: POSITION.BOTTOM_RIGHT,
-                                timeout: 2000,
-                                icon: "mdi-checkbox-marked-circle-outline",
-                                pauseOnHover: true,
+                    if (this.form.id) {
+                        // 🔄 UPDATE
+                        ref.child(this.form.id).update(appointmentData)
+                            .then(() => {
+                                this.afterSubmit("Appointment updated successfully!");
+                            })
+                            .catch((err) => {
+                                this.loading = false;
+                                this.$toast.error("Failed to update appointment.");
+                                console.error(err);
                             });
-                        } else {
-                            const newAppointment = { 
-                                id: Date.now(),  
-                                date: this.form.date,  
-                                ...this.form
-                            };
-
-                            this.bookedAppointments.push(newAppointment);
-                            localStorage.setItem("appointments", JSON.stringify(this.bookedAppointments));
-                            this.$emit("appointment-added", newAppointment);
-
-                            this.$toast.success("New appointment added successfully!", {
-                                position: POSITION.BOTTOM_RIGHT,
-                                timeout: 2000,
-                                icon: "mdi-checkbox-marked-circle-outline",
-                                pauseOnHover: true,
+                    } else {
+                        // ➕ ADD
+                        ref.push(appointmentData)
+                            .then(() => {
+                                this.afterSubmit("Appointment added successfully!");
+                            })
+                            .catch((err) => {
+                                this.loading = false;
+                                this.$toast.error("Failed to add appointment.");
+                                console.error(err);
                             });
-                            this.cancelDialog();
-                        }
-
-                        this.modal = false;
-                        this.loading = false;
-                    }, 3000);
+                    }
                 }
             },
-            loadAppointments() {
-                const storedAppointments = localStorage.getItem("appointments");
-                if (storedAppointments) {
-                    this.bookedAppointments = JSON.parse(storedAppointments);
-                } else {
-                    this.bookedAppointments = [];
-                }
+            afterSubmit(message) {
+                this.$toast.success(message, {
+                    position: POSITION.BOTTOM_RIGHT,
+                    timeout: 2000,
+                    icon: "mdi-checkbox-marked-circle-outline",
+                    pauseOnHover: true,
+                });
+                this.cancelDialog();
+                this.loading = false;
+                this.modal = false;
             },
         },
     };

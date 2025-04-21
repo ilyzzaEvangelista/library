@@ -12,14 +12,14 @@
             <v-row align="center" justify="center" class="fill-height">
                 <v-col cols="12" class="d-flex flex-column align-center justify-center text-center">
                     <p style="color: #388e3c; font-size: 50px; font-weight: 700;">Simple way</p>
-                    <p style="font-size: 50px;">to manage <span style="color: #388e3c; font-weight: 700;">personal finances</span></p>
+                    <p class="mt-n8 pa-0" style="font-size: 50px;">to manage <span style="color: #388e3c; font-weight: 700;">personal finances</span></p>
                     <!-- <v-btn class="white--text text-capitalized" large color="#43A047">Register</v-btn> -->
                 </v-col>
             </v-row>
         </v-container>
 
         <!-- Traits -->
-        <v-container fluid class="fill-height pa-0 mt-10">
+        <v-container fluid class="fill-height pa-0 mt-5">
             <v-row>
                 <v-col cols="12" class="mb-5">
                     <v-row>
@@ -255,7 +255,7 @@
         </v-container>
           
         <!-- Footer -->
-        <v-footer app>
+        <v-footer app style="background: #ffffff;">
             <v-row>
                 <v-col class="text-center" cols="12">
                     <v-icon>mdi-facebook</v-icon>
@@ -324,6 +324,14 @@
                 ],
             };
         },
+        mounted(){
+            this.scrollToTop();
+        },
+        methods: {
+            scrollToTop(){
+                window.scrollTo(0, 0);
+            }
+        }
     };
 </script>
 

@@ -30,7 +30,16 @@
                                 <v-text-field v-model="sixteen" label="16 oz Sales" type="number" outlined dense hide-details />
                             </v-col>
                             <v-col cols="12" md="3" class="d-flex align-center">
-                                <v-btn @click="handleSaveSales" color="indigo" dark class="mt-0" small>
+                                <v-tooltip v-if="isTodaySalesRecorded" top>
+                                    <template v-slot:activator="{ on: onTooltip }">
+                                        <v-btn class="text-capitalize" small v-on="{ ...onMenu, ...onTooltip }">Add Sales</v-btn>
+                                    </template>
+                                    <span>
+                                        Sales for today are already recorded.<br />
+                                        You can update today's data below.
+                                    </span>
+                                </v-tooltip>
+                                <v-btn v-else color="indigo" dark class="text-capitalized mt-0" small @click="handleSaveSales">
                                     Add Sales
                                 </v-btn>
                             </v-col>
@@ -39,44 +48,54 @@
                 </v-card>
 
                 <!-- Daily Summary Section -->
-                <v-card class="pa-6 elevation-3 rounded-lg" outlined>
+                <v-card class="pa-2 elevation-3 rounded-lg" outlined>
                     <v-card-title class="text-h5 text-indigo-darken-2 font-weight-bold">
                         Daily Summary
                     </v-card-title>
                     <v-card-text>
                         <div>
-                            <v-container v-if="Object.keys(groupedExpenses).length > 0">
-                                <v-row>
-                                    <v-col cols="6" v-for="(expense, date) in groupedExpenses" :key="date" class="mb-6">
-                                        <v-card class="pa-5 elevation-1 rounded-lg">
-                                            <v-card-title class="text-h6 font-weight-bold mb-3">
-                                                <v-icon color="indigo" left>mdi-calendar</v-icon>
-                                                <strong>Date:</strong> {{ formatDate(date) }}
-                                            </v-card-title>
-                                            <v-card-text>
-                                                <div class="mb-2"><strong>Puhunan:</strong> ₱{{ expense }}</div>
-                                                <div class="mb-2"><strong>Kita (Sales):</strong> ₱{{ salesInput || 0 }}</div>
-                                                <div><strong>Tubo (Profit):</strong> ₱{{ calculateProfit(date) || 0 }}</div>
-                                            </v-card-text>
-                                        </v-card>
-                                    </v-col>
+                            <v-container v-if="Object.keys(groupedExpenses).length > 0 || Object.keys(salesData).length > 0">
+                                <v-col cols="12" md="3" class="mb-4">
+                                    <v-text-field v-model="searchDate" label="Search by Date" type="date" outlined dense hide-details />
+                                </v-col>
 
-                                    <v-col cols="6">
-                                        <v-card class="pa-5 elevation-1 rounded-lg">
-                                            <v-card-title class="text-h5 text-indigo-darken-2 font-weight-bold">
-                                                <v-icon color="indigo" left>mdi-cart-outline</v-icon>
-                                                <span>You Sold:</span>
-                                            </v-card-title>
-                                            <v-card-text class="text-h6">
-                                                <div class="mb-2">
-                                                    <v-chip color="indigo" text-color="white" class="ma-1" large> <strong>{{ eight || 0 }}</strong> × 8oz </v-chip>
-                                                    <v-chip color="teal" text-color="white" class="ma-1" large> <strong>{{ twelve || 0 }}</strong> × 12oz </v-chip>
-                                                    <v-chip color="purple" text-color="white" class="ma-1" large> <strong>{{ sixteen || 0 }}</strong> × 16oz </v-chip>
-                                                </div>
-                                            </v-card-text>
-                                        </v-card>
-                                    </v-col>
-                                </v-row>
+                                <v-col cols="12">
+                                    <v-data-table :headers="tableHeaders" :items="paginatedInventory" dense hide-default-footer>
+                                        <template v-slot:[`item.date`]="{ item }">
+                                            <v-icon small color="indigo" class="mr-1">mdi-calendar</v-icon>
+                                            {{ formatDate(item.date) }}
+                                        </template>
+
+                                        <template v-slot:[`item.expense`]="{ item }">
+                                            ₱{{ item.expense }}
+                                        </template>
+
+                                        <template v-slot:[`item.sales`]="{ item }">
+                                            ₱{{ item.sales }}
+                                        </template>
+
+                                        <template v-slot:[`item.profit`]="{ item }">
+                                            ₱{{ item.profit }}
+                                        </template>
+
+                                        <template v-slot:[`item.eight`]="{ item }">
+                                            <v-text-field v-model="item.eight" type="number" variant="plain" density="compact" hide-details class="pa-0 ma-0" />
+                                        </template>
+
+                                        <template v-slot:[`item.twelve`]="{ item }">
+                                            <v-text-field v-model="item.twelve" type="number" variant="plain" density="compact" hide-details class="pa-0 ma-0" />
+                                        </template>
+
+                                        <template v-slot:[`item.sixteen`]="{ item }">
+                                            <v-text-field v-model="item.sixteen" type="number" variant="plain" density="compact" hide-details class="pa-0 ma-0" />
+                                        </template>
+
+                                        <template v-slot:[`item.action`]="{ item }">
+                                            <v-btn class="text-capitalized" color="indigo" x-small @click="updateSales(item)" dark>Update</v-btn>
+                                        </template>
+                                    </v-data-table>
+                                    <v-pagination v-model="page" :length="pageCount" color="indigo" class="mt-4"></v-pagination>
+                                </v-col>
                             </v-container>
 
                             <v-alert v-else type="info" text border="start" border-color="indigo" class="mt-4">
@@ -108,6 +127,20 @@
                 eight: 0,
                 twelve: 0,
                 sixteen: 0,
+                inventorySales: [],
+                tableHeaders: [
+                    { text: "Date", value: "date" },
+                    { text: "Puhunan", value: "expense" },
+                    { text: "8 oz", width: "100", value: "eight" },
+                    { text: "12 oz", width: "100", value: "twelve" },
+                    { text: "16 oz", width: "100", value: "sixteen" },
+                    { text: "Kita (Sales)", value: "sales" },
+                    { text: "Tubo (Profit)", value: "profit" },
+                    { text: "Actions", value: "action" },
+                ],
+                page: 1,
+                itemsPerPage: 5,
+                searchDate: "", // New property for search input
             };
         },
         computed: {
@@ -116,19 +149,74 @@
                 const grouped = {};
                 if (Array.isArray(this.inventoryData)) {
                     this.inventoryData.forEach((item) => {
-                        const date = item.date; 
+                        const date = item.date;
                         if (!grouped[date]) {
                             grouped[date] = 0;
                         }
-                        grouped[date] += item.amount; 
+                        grouped[date] += item.amount;
                     });
                 }
                 return grouped;
             },
+            filteredData() {
+                if (!this.searchDate) {
+                    return this.tableData; // Return all data if no date is provided
+                }
+                return this.tableData.filter((item) => item.date === this.searchDate); // Filter data by date
+            },
+            tableData() {
+                return Object.entries(this.groupedExpenses).map(([date, expense]) => {
+                    const sale = this.inventorySales.find((s) => s.timestamp === date) || {};
+                    const sales = sale.salesInput || 0;
+                    const eight = sale.eight || 0;
+                    const twelve = sale.twelve || 0;
+                    const sixteen = sale.sixteen || 0;
+                    const id = sale.id || null;
+                    const profit = sales - expense;
+
+                    return {
+                        id,
+                        date,
+                        expense,
+                        sales,
+                        profit,
+                        eight,
+                        twelve,
+                        sixteen,
+                    };
+                });
+            },
+            paginatedInventory() {
+                const start = (this.page - 1) * this.itemsPerPage;
+                return this.filteredData.slice(start, start + this.itemsPerPage); // Use filtered data here
+            },
+            pageCount() {
+                return Math.ceil(this.filteredData.length / this.itemsPerPage); // Page count based on filtered data
+            },
         },
+
         methods: {
             openDialog() {
                 this.dialog = true;
+                this.fetchSales();
+            },
+            fetchSales() {
+                this.loading = true;
+                const inventoryRef = firebase.database().ref("inventory/sales");
+                inventoryRef.on("value", (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        this.inventorySales = Object.entries(data).map(([id, val]) => ({
+                            id,
+                            expense: val.expense,
+                            salesInput: val.salesInput,
+                            timestamp: val.timestamp,
+                        }));
+                    } else {
+                        this.inventorySales = [];
+                    }
+                    this.loading = false;
+                });
             },
             // Add sales for a specific date
             addSales() {
@@ -141,13 +229,13 @@
             },
             // Calculate profit (Tubo) for a specific date
             calculateProfit(date) {
-                const expenses = this.groupedExpenses[date] || 0; // Default to 0 if no expense
+                const expenses = this.groupedExpenses[date] || 0;
                 const eights = this.eight * 5;
                 const twelves = this.twelve * 10;
-                const sixteens = this.twelve * 15;
+                const sixteens = this.sixteen * 15; // <-- Fixed this line
                 this.salesInput = eights + twelves + sixteens;
-                const sales = this.salesInput || 0; // Default to 0 if no sales
-                return sales - expenses; // Profit = Sales - Expenses
+                const sales = this.salesInput || 0;
+                return sales - expenses;
             },
             formatDate(date) {
                 return new Date(date).toLocaleDateString("en-US", {
@@ -166,7 +254,7 @@
                 const sixteen = this.sixteen || 0;
 
                 const totalSales = eight * 5 + twelve * 10 + sixteen * 15;
-                this.salesInput = totalSales;
+                this.salesData[now] = totalSales;
 
                 // Get today's expense from groupedExpenses
                 const expense = this.groupedExpenses[now] || 0;
@@ -191,6 +279,26 @@
                 // Optional reset
                 this.resetSalesForm();
             },
+
+            updateSales(item) {
+                const ref = firebase.database().ref(`inventory/sales/${item.id}`);
+                const updatedSalesInput = item.eight * 5 + item.twelve * 10 + item.sixteen * 15;
+
+                ref.update({
+                    eight: item.eight,
+                    twelve: item.twelve,
+                    sixteen: item.sixteen,
+                    salesInput: updatedSalesInput,
+                })
+                    .then(() => {
+                        this.$toast.success("Sales updated successfully");
+                    })
+                    .catch((error) => {
+                        console.error("Error updating sales:", error);
+                        this.$toast.error("Failed to update sales");
+                    });
+            },
+
             resetSalesForm() {
                 this.eight = 0;
                 this.twelve = 0;

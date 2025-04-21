@@ -62,6 +62,8 @@
 </template>
 
 <script>
+    import firebase from "firebase/app";
+    import "firebase/database";
     export default {
         data() {
             return {
@@ -81,30 +83,49 @@
             },
         },
         mounted() {
-            this.loadAppointmentsFromLocalStorage();
+            this.fetchAppointment();
         },
         methods: {
             openDialog() {
-                this.loadAppointmentsFromLocalStorage();
+                this.fetchAppointment();
                 this.modal = true;
             },
             cancelDialog() {
                 this.modal = false;
             },
-            loadAppointmentsFromLocalStorage() {
+            fetchAppointment() {
                 this.loading = true;
-                const storedAppointments = JSON.parse(localStorage.getItem("appointments")) || [];
-                const events = storedAppointments.map((appointment) => {
-                    return {
-                        name: `Reserved`,
-                        start: appointment.date,
-                        end: appointment.date,
-                        color: "#0077B5",
-                        style: "white--text",
-                    };
+                const inventoryRef = firebase.database().ref("dental/appointment");
+                inventoryRef.on("value", (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        const appointments = Object.entries(data).map(([id, val]) => {
+                            return {
+                                id,
+                                name: val.name,
+                                age: val.age,
+                                email: val.email,
+                                contact: val.contact,
+                                service: val.service,
+                                date: val.date,
+                                image: val.image,
+                            };
+                        });
+
+                        // Update calendar events
+                        this.calendarEvents = appointments.map(app => ({
+                            name: `Reserved`,
+                            start: app.date,
+                            end: app.date,
+                            color: "#0077B5",
+                            style: "white--text",
+                        }));
+                    } else {
+                        this.calendarEvents = [];
+                    }
+
+                    this.loading = false;
                 });
-                this.calendarEvents = events;
-                this.loading = false;
             },
             goToPreviousMonth() {
                 const prevMonth = new Date(this.selectedDate);

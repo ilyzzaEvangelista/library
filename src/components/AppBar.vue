@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <v-app-bar app color="primary" class="" flat>
+        <v-app-bar app color="modern-app-bar" class="" flat>
             <v-container class="d-flex align-center justify-space-between">
                 <v-spacer></v-spacer>
                 <v-btn text class="nav-btn" @click="ToHome">Home</v-btn>
