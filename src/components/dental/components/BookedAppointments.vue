@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-dialog v-model="modal" width="1300px" @input="loadAppointments">
+        <v-dialog v-model="modal" width="1300px">
             <span v-if="mode === 'new'">
                 <AppointmentForm :stat="'new'" :appointment="selectedItem" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
             </span>
@@ -219,7 +219,6 @@
                     }
                     this.selectedItem = null;
                     this.loading = false;
-                    this.loadAppointments();
                 }, 3000);
             },
 
