@@ -163,6 +163,7 @@
 
             // Open the BookedAppointments modal
             openBook() {
+                console.log(this.modal)
                 this.modal = true;
             },
 

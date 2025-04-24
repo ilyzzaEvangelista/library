@@ -16,7 +16,7 @@
                       <v-toolbar class="elevation-0" flat>
                           <v-spacer></v-spacer>
                           <v-card-title class="headline text-center text-wrap" style="white-space: normal;">
-                              Welcome, {{ capitalizedUsername }}!
+                              Welcome, {{ capitalizedUsername ? capitalizedUsername : 'Admin' }}!
                           </v-card-title>
                           <v-spacer></v-spacer>
 
@@ -189,8 +189,12 @@
           },
 
           capitalizedUsername() {
-              return this.username.charAt(0).toUpperCase() + this.username.slice(1);
-          },
+            if (this.username && this.username.length > 0) {
+                return this.username.charAt(0).toUpperCase() + this.username.slice(1);
+            }
+            return ''; // return an empty string if username is not defined or empty
+        }
+
       },
       watch: {
           modal(v) {
