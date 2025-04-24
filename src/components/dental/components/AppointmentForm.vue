@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-btn v-if="stat !== 'new'"  color="#1A237E" @click="openDialog" small class="white--text text-capitalized">
+        <v-btn v-if="stat !== 'new'" color="#1A237E" @click="openDialog" small class="white--text text-capitalized">
             {{ appointment ? 'Update' : 'Book an appointment' }}
         </v-btn>
 
@@ -62,8 +62,8 @@
 
 <script>
     import { POSITION } from "vue-toastification";
-    import firebase from "firebase/app";
     import "firebase/database";
+    import { db2 } from "@/firebase/init";
     export default {
         props: {
             appointment: {
@@ -81,7 +81,7 @@
             stat: {
                 type: String,
                 default: "",
-            },  
+            },
         },
         data() {
             return {
@@ -103,7 +103,7 @@
                 rules: {
                     rules: [(v) => !!v || "This is a required field."],
                 },
-                minDate: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+                minDate: new Date().toISOString().split("T")[0], // YYYY-MM-DD format
             };
         },
         watch: {
@@ -118,11 +118,11 @@
             this.isAdmin();
         },
         methods: {
-            isAdmin(){
-                if(this.stat === 'new'){
-                    this.modal = true
-                }else{
-                    this.modal = false
+            isAdmin() {
+                if (this.stat === "new") {
+                    this.modal = true;
+                } else {
+                    this.modal = false;
                 }
             },
             openDialog() {
@@ -152,8 +152,8 @@
                 this.modal = false;
                 this.loading = false;
                 this.$nextTick(() => {
-                    const overlay = document.querySelector('.v-overlay__scrim');
-                    if (overlay) overlay.style.display = 'none';
+                    const overlay = document.querySelector(".v-overlay__scrim");
+                    if (overlay) overlay.style.display = "none";
                     this.form = {
                         name: "",
                         age: "",
@@ -163,13 +163,13 @@
                         date: null,
                         image: null,
                     };
-                }); 
+                });
             },
             submitForm() {
                 if (this.$refs.form.validate()) {
                     this.loading = true;
 
-                    const ref = firebase.database().ref("dental/appointment");
+                    const ref = db2.ref("dental/appointment");
                     const appointmentData = {
                         name: this.form.name,
                         age: this.form.age,
@@ -177,12 +177,13 @@
                         contact: this.form.contact,
                         service: this.form.service,
                         date: this.form.date,
-                        image: this.form.image
+                        image: this.form.image,
                     };
 
                     if (this.form.id) {
                         // 🔄 UPDATE
-                        ref.child(this.form.id).update(appointmentData)
+                        ref.child(this.form.id)
+                            .update(appointmentData)
                             .then(() => {
                                 this.afterSubmit("Appointment updated successfully!");
                             })
