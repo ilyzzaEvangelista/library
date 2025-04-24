@@ -47,7 +47,7 @@
     export default {
         data() {
             return {
-                modal: false,
+                modal: true,
                 services: [
                     {
                         title: "Braces",
@@ -103,6 +103,7 @@
             },
             cancelDialog() {
                 this.modal = false;
+                this.$emit('servicesBtn');
             },
         },
     };

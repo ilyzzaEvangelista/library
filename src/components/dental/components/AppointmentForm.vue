@@ -39,7 +39,7 @@
                             <v-select v-model="form.service" :items="services" item-text="title" label="Select Service" :rules="rules.rules" outlined dense required></v-select>
 
                             <!-- Date Picker -->
-                            <v-text-field type="date" v-model="form.date" label="Appointment Date" :rules="rules.rules" outlined dense required></v-text-field>
+                            <v-text-field type="date" v-model="form.date" label="Appointment Date" :rules="rules.rules" :min="minDate" outlined dense required></v-text-field>
 
                             <!-- X-ray File Input -->
                             <v-file-input prepend-icon="" prepend-inner-icon="mdi-file-image" type="file" accept="image/png, image/jpeg, image/bmp" @change="onFileChange" :disabled="loading" outlined dense />
@@ -103,6 +103,7 @@
                 rules: {
                     rules: [(v) => !!v || "This is a required field."],
                 },
+                minDate: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
             };
         },
         watch: {

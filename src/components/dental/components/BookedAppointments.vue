@@ -1,20 +1,25 @@
 <template>
     <div>
-        <v-dialog v-model="modal" width="1300px">
+        <v-dialog v-model="modal" :width="$vuetify.breakpoint.smAndDown ? '100%' : '1300px'" scrollable>
             <span v-if="mode === 'new'">
                 <AppointmentForm :stat="'new'" :appointment="selectedItem" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
             </span>
+
             <span v-else>
                 <v-snackbar v-model="snackbar" :timeout="5000" color="white" top>
                     <v-icon color="red" class="mr-3 mb-1">mdi-information-outline</v-icon>
                     <span class="black--text">{{ snackbarMessage }}</span>
                 </v-snackbar>
-                <v-card class="elevation-0 pa-5">
+
+                <v-card class="elevation-0 pa-3">
                     <v-card-title class="pa-0">
-                        <v-toolbar class="elevation-0">
+                        <v-toolbar class="elevation-0" flat>
                             <v-spacer></v-spacer>
-                            <v-card-title class="headline">Booked Appointments {{ mode }}</v-card-title>
+                            <v-card-title class="headline text-center text-wrap" style="white-space: normal;">
+                                Booked Appointments {{ mode }}
+                            </v-card-title>
                             <v-spacer></v-spacer>
+
                             <v-toolbar-items>
                                 <v-tooltip bottom>
                                     <template #activator="{ on, attrs }">
@@ -27,46 +32,65 @@
                             </v-toolbar-items>
                         </v-toolbar>
                     </v-card-title>
-                    <v-divider></v-divider>
 
-                    <div class="pa-3">
-                        <v-col cols="12">
-                            <v-row>
-                                <v-col cols="4">
-                                    <v-text-field v-model="searchTerm" class="mb-5" label="Search Appointment" append-icon="mdi-magnify" single-line hide-details outlined dense />
-                                </v-col>
-                            </v-row>
-                        </v-col>
-                    </div>
+                    <v-divider class="my-2" />
 
-                    <v-data-table :headers="headers" :items="paginatedAppointments" :loading="loading" item-value="title" class="elevation-1" hide-default-footer>
-                        <template v-slot:[`item.image`]="{ item }">
-                            <v-btn class="text-capitalized" small v-if="item.image" text @click="viewImage(item.image)">
-                                View Image
-                            </v-btn>
-                            <p class="mt-3" v-else>N/A</p>
-                        </template>
+                    <v-container fluid>
+                        <v-row dense>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field v-model="searchTerm" class="mb-3" label="Search Appointment" append-icon="mdi-magnify" single-line hide-details outlined dense />
+                            </v-col>
+                        </v-row>
 
-                        <template v-slot:[`item.date`]="{ item }">
-                            <p class="mt-3">{{ formatDate(item.date)}}</p>
-                        </template>
+                        {{ $vuetify.breakpoint.name }}
+                        <!-- Horizontal scroll for small screens -->
+                        <v-col cols="12" >
+                            <div style="overflow-x: auto;">
+                                <v-data-table :headers="headers" :items="paginatedAppointments" :loading="loading" item-value="title" class="elevation-1" hide-default-footer dense>
+                                    <template v-slot:[`item.image`]="{ item }">
+                                        <v-btn class="text-capitalized" small v-if="item.image" text @click="viewImage(item.image)">
+                                            View Image
+                                        </v-btn>
+                                        <p class="mt-3" v-else>N/A</p>
+                                    </template>
 
-                        <template v-slot:[`item.actions`]="{ item }">
-                            <div class="d-flex justify-center align-center">
-                                <AppointmentForm :appointment="item" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
-                                <v-btn small color="#B71C1C" class="mx-2 text-capitalized" style="color: white;" @click="removeBook(item)">
-                                    {{ formattedLabels.delete }}
-                                </v-btn>
+                                    <template v-slot:[`item.date`]="{ item }">
+                                        <p class="mt-3">{{ formatDate(item.date) }}</p>
+                                    </template>
+
+                                    <template v-slot:[`item.actions`]="{ item }">
+                                        <div class="d-flex flex-column flex-sm-row justify-center align-center" :class="{ 'mb-5': $vuetify.breakpoint.name === 'xs' }">
+                                            <AppointmentForm :appointment="item" @appointment-added="addedAppointment" @appointment-updated="updatedAppointment" />
+                                            <v-btn small color="#B71C1C" class="mx-2 mt-2 mt-sm-0 text-capitalized" style="color: white;" @click="removeBook(item)">
+                                                {{ formattedLabels.delete }}
+                                            </v-btn>
+                                        </div>
+                                    </template>
+                                </v-data-table>
                             </div>
-                        </template>
-                    </v-data-table>
+                        </v-col>
 
-                    <v-pagination v-model="page" :length="pageCount" color="#1A237E" class="mt-4"></v-pagination>
+                        <v-pagination v-model="page" :length="pageCount" color="#1A237E" class="mt-4" />
+                    </v-container>
                 </v-card>
             </span>
         </v-dialog>
+
+        <v-dialog v-model="imageDialog" max-width="600px">
+            <v-card>
+                <v-card-title class="headline">Image Preview</v-card-title>
+                <v-card-text>
+                    <v-img :src="selectedImage" aspect-ratio="1.5" max-height="500" contain />
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" text @click="imageDialog = false">Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
+
 
 <script>
     import AppointmentForm from "./AppointmentForm.vue";
@@ -154,6 +178,10 @@
         },
 
         methods: {
+            viewImage(imageUrl) {
+                this.selectedImage = imageUrl;
+                this.imageDialog = true;
+            },
             capitalizeSentence(text) {
                 return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
             },

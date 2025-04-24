@@ -4,7 +4,14 @@
         <BookedAppointments v-if="modal" @logout="logout" />
 
         <!-- Show Login button if not logged in -->
-        <v-btn text @click="openDialog">Login</v-btn>
+        <v-tooltip bottom color="#FAFAFA">
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn class="menu-btn" @click="openDialog" color="white" v-on="{ ...on, ...tooltip }" icon>
+                <v-icon size="20" color="white">mdi-login</v-icon>
+              </v-btn>
+            </template>
+            <span class="black--text bold">Login here</span>
+          </v-tooltip>
 
         <v-dialog v-model="dialog" width="500">
             <v-card>

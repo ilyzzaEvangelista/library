@@ -10,7 +10,7 @@
                     </template>
                 </v-breadcrumbs>
                 <v-row v-if="!selectedProject" class="ml-2">
-                    <v-col v-for="project in projects" :key="project.id" cols="12" md="3">
+                    <v-col v-for="project in projects" :key="project.id" cols="12" md="4">
                         <v-card @click="selectProject(project)" class="full-card">
                             <v-img :src="project.image" class="project-image mt-10" contain elevation-1 />
                             <v-card-title class="project-title">{{ project.name }}</v-card-title>

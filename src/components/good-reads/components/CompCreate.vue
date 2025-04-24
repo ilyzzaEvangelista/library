@@ -7,7 +7,7 @@
             </v-btn>
         </div>
 
-        <v-dialog v-model="modal" width="600">
+        <v-dialog v-model="modal" width="1000">
             <v-card>
                 <v-card-title class="pa-0">
                     <v-toolbar class="elevation-0">
@@ -27,13 +27,7 @@
 
                 <v-form @submit.prevent="submitForm">
                     <v-card class="pa-5" flat>
-                        <v-card class="fill-height pa-5 pt-10 align-center justify-center" flat>
-                            <v-text-field v-model="bookData.title" label="Book Title" :disabled="loading" :rules="rules.rules" outlined dense required></v-text-field>
-                            <v-text-field v-model="bookData.author" label="Author" :disabled="loading" :rules="rules.rules" outlined dense required></v-text-field>
-                            <v-textarea v-model="bookData.description" label="Description" :disabled="loading" :rules="rules.rules" outlined dense required></v-textarea>
-                            <!-- <v-file-input prepend-icon="" prepend-inner-icon="mdi-file-image" type="file" accept="image/png, image/jpeg, image/bmp" @change="onFileChange" :rules="rules.rules" :disabled="loading" outlined dense /> -->
-                        </v-card>
-                        <!-- <v-col cols="12">
+                        <v-col cols="12">
                             <v-row>
                                 <v-col cols="6">
                                     <v-card class="fill-height pa-5 pt-10 align-center justify-center" outlined>
@@ -52,7 +46,7 @@
                                     </v-card>
                                 </v-col>
                             </v-row>
-                        </v-col> -->
+                        </v-col>
                     </v-card>
                     <v-divider></v-divider>
                     <v-card-actions>
@@ -69,7 +63,7 @@
 
 <script>
     import { POSITION } from "vue-toastification";
-    import axios from "@/axios";
+
     export default {
         props: {
             book: {
@@ -86,8 +80,8 @@
         data() {
             return {
                 modal: false,
-                image: null, 
-                previewImage: "", 
+                image: null, // Store raw File object here
+                previewImage: "", // For displaying preview
                 rules: {
                     rules: [(v) => !!v || "This is a required field."],
                 },
@@ -96,7 +90,7 @@
                     title: "",
                     author: "",
                     description: "",
-                    image: "", 
+                    image: "", // Used for display only
                 },
                 loading: false,
             };
@@ -149,46 +143,43 @@
                     console.warn("Invalid file format or no file selected");
                 }
             },
-
             submitForm() {
                 this.loading = true;
 
-                const isUpdate = !!this.bookData.id;
-                const url = isUpdate ? `/books/${this.bookData.id}` : "/books";
-                const method = isUpdate ? "put" : "post";
+                setTimeout(() => {
+                    let books = JSON.parse(localStorage.getItem("books")) || [];
 
-                axios({
-                    method,
-                    url,
-                    data: this.bookData,
-                })
-                    .then((response) => {
-                        const savedBook = response.data;
-
-                        this.$emit(isUpdate ? "book-updated" : "book-added", savedBook);
-
-                        this.$toast.success(isUpdate ? "Successfully updated book!" : "New book added successfully!", {
+                    if (this.bookData.id) {
+                        // Update
+                        books = books.map((b) => (b.id === this.bookData.id ? { ...this.bookData, image: this.bookData.image || b.image } : b));
+                        this.$emit("book-updated", { ...this.bookData });
+                        this.$toast.success("Successfully updated book!", {
                             position: POSITION.BOTTOM_RIGHT,
                             timeout: 2000,
                             icon: "mdi-checkbox-marked-circle-outline",
                             pauseOnHover: true,
                         });
-                        this.$emit("init");
-                        this.modal = false;
-                    })
-                    .catch((error) => {
-                        console.error("Error saving book:", error);
-                        const message = error.response?.data?.message || "Failed to save book.";
-                        this.$toast.error(message, {
+                    } else {
+                        // Add
+                        const newBook = {
+                            ...this.bookData,
+                            id: Date.now(),
+                            image: this.bookData.image,
+                        };
+                        books.push(newBook);
+                        this.$emit("book-added", newBook);
+                        this.$toast.success("New book added successfully!", {
                             position: POSITION.BOTTOM_RIGHT,
                             timeout: 2000,
-                            icon: "mdi-alert-circle",
+                            icon: "mdi-checkbox-marked-circle-outline",
                             pauseOnHover: true,
                         });
-                    })
-                    .finally(() => {
-                        this.loading = false;
-                    });
+                    }
+
+                    localStorage.setItem("books", JSON.stringify(books));
+                    this.modal = false;
+                    this.loading = false;
+                }, 3000);
             },
         },
     };

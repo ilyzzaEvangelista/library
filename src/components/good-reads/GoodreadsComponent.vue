@@ -6,14 +6,14 @@
 
         <v-container fluid class="book-list mb-5">
             <div class="d-flex justify-center align-center pa-5">
-                <h1>My Literary Journey</h1>
+                <h1 >My Literary Journey</h1>
             </div>
             <v-row>
                 <v-col cols="4">
                     <v-text-field v-model="searchTerm" class="mb-5" label="Search Books" append-icon="mdi-magnify" single-line hide-details outlined dense />
                 </v-col>
                 <v-col cols="8">
-                    <CompCreate :book="selectedBook" @init="fetchBooks" />
+                    <CompCreate :book="selectedBook" @book-added="handleBookAdded" />
                 </v-col>
             </v-row>
             <v-data-table :headers="headers" :items="paginatedBooks" :loading="loading" item-value="title" class="elevation-1" hide-default-footer>
@@ -81,9 +81,7 @@
 </template>
 
 <script>
-    import axios from "@/axios"; // Import your axios instance
     import CompCreate from "./components/CompCreate.vue";
-
     export default {
         name: "GoodreadsComponent",
         components: {
@@ -104,11 +102,20 @@
                     image: null,
                 },
                 headers: [
+                    { text: "Book Cover", align: "center", value: "image", sortable: false },
                     { text: "Title & Author", align: "center", value: "title" },
                     { text: "Description", align: "center", value: "description" },
                     { text: "Actions", align: "center", value: "actions", sortable: false },
                 ],
                 books: [],
+                editDialog: false,
+                editingIndex: null,
+                editedBook: {
+                    title: "",
+                    author: "",
+                    description: "",
+                    image: null,
+                },
                 selectedBook: null,
             };
         },
@@ -142,74 +149,94 @@
                 this.selectedImage = image;
                 this.imageDialog = true;
             },
-            fetchBooks() {
-                this.loading = true;
-                axios
-                    .get("/books")
-                    .then((response) => {
-                        this.books = response.data;
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching books:", error);
-                    })
-                    .finally(() => {
-                        this.loading = false;
-                    });
-            },
             addBook() {
-                this.loading = true;
-                axios
-                    .post("/books", this.newBook)
-                    .then((response) => {
-                        this.books.unshift(response.data);
-                        this.newBook.title = "";
-                        this.newBook.author = "";
-                        this.newBook.description = "";
-                        this.newBook.image = null;
-                        this.loading = false;
-                    })
-                    .catch((error) => {
-                        console.error("Error adding book:", error);
-                    });
+                this.loading = true; // Start loading
+                setTimeout(() => {
+                    this.books.push({ ...this.newBook });
+                    this.newBook.title = "";
+                    this.newBook.author = "";
+                    this.newBook.description = "";
+                    this.newBook.image = null;
+                    this.loading = false; // Stop loading after 3 seconds
+                }, 3000); // 3-second delay
             },
             handleBookUpdated(updatedBook) {
                 this.loading = true;
-                axios
-                    .put(`/books/${updatedBook.id}`, updatedBook)
-                    .then((response) => {
-                        const index = this.books.findIndex((book) => book.id === updatedBook.id);
-                        if (index !== -1) {
-                            this.books.splice(index, 1, response.data);
-                        }
-                        this.loading = false;
-                    })
-                    .catch((error) => {
-                        console.error("Error updating book:", error);
-                    });
+                setTimeout(() => {
+                    const index = this.books.findIndex((book) => book.id === updatedBook.id);
+                    if (index !== -1) {
+                        this.books.splice(index, 1, updatedBook);
+                        this.saveBooksToLocalStorage();
+                    }
+                    this.selectedBook = null;
+                    this.loading = false;
+                }, 3000);
+            },
+            editBook(index) {
+                this.editingIndex = index;
+                this.editedBook = { ...this.books[index] };
+                this.editDialog = true;
+            },
+            saveBook() {
+                if (this.editingIndex !== null) {
+                    this.books[this.editingIndex] = { ...this.editedBook };
+                }
+                this.editDialog = false;
+                this.editedBook = { title: "", author: "", description: "", image: null };
+            },
+            cancelEdit() {
+                this.editDialog = false;
             },
             removeBook(book) {
                 this.loading = true;
-                axios
-                    .delete(`/books/${book.id}`)
-                    .then(() => {
-                        const index = this.books.indexOf(book);
-                        if (index !== -1) {
-                            this.books.splice(index, 1);
-                        }
-                        this.loading = false;
-                    })
-                    .catch((error) => {
-                        console.error("Error deleting book:", error);
-                    });
+                setTimeout(() => {
+                    const index = this.books.indexOf(book);
+                    if (index !== -1) {
+                        this.books.splice(index, 1);
+                        this.saveBooksToLocalStorage();
+                    }
+                    this.loading = false;
+                }, 3000);
+            },
+            onEditFileChange(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => {
+                        this.editedBook.image = reader.result;
+                    };
+                }
+            },
+            handleBookAdded(bookData) {
+                this.loading = true;
+                setTimeout(() => {
+                    this.books.unshift(bookData);
+                    this.saveBooksToLocalStorage();
+                    this.loading = false;
+                }, 3000);
+            },
+            saveBooksToLocalStorage() {
+                localStorage.setItem("books", JSON.stringify(this.books));
+            },
+            loadBooksFromLocalStorage() {
+                const storedBooks = localStorage.getItem("books");
+                if (storedBooks) {
+                    this.books = JSON.parse(storedBooks);
+                }
             },
         },
         mounted() {
-            this.fetchBooks();
+            this.loadBooksFromLocalStorage();
         },
     };
 </script>
 
 <style scoped>
+    #app {
+        color: #ffffff;
+    }
+
     .text-capitalized {
         text-transform: capitalize;
     }
