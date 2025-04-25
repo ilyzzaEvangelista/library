@@ -3,7 +3,8 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/database'; // ✅ add this for Realtime Database
 
-const firebaseConfig = {
+// First Firebase config
+const firebaseConfig1 = {
   apiKey: "AIzaSyAVdcjAxZqTs-Nf4r88le9hLp1irAwstdI",
   authDomain: "vue-blog-cms.firebaseapp.com",
   databaseURL: "https://vue-blog-cms-default-rtdb.firebaseio.com",
@@ -14,11 +15,32 @@ const firebaseConfig = {
   measurementId: "G-XEK5TJJ3MD"
 };
 
-// Initialize Firebase only once
+// Second Firebase config
+const firebaseConfig2 = {
+  apiKey: "AIzaSyArLSy2JpTB8wa5LO1Bwyu9UFlPgqM6FzQ",
+  authDomain: "dental-f314c.firebaseapp.com",
+  databaseURL: "https://dental-f314c-default-rtdb.firebaseio.com",
+  projectId: "dental-f314c",
+  storageBucket: "dental-f314c.firebasestorage.app",
+  messagingSenderId: "57734486457",
+  appId: "1:57734486457:web:7a1eab0303f514013a7e68",
+  measurementId: "G-V7EWXZ5YEC"
+};
+
+// Initialize Firebase apps
 if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig1); // First app
+  firebase.initializeApp(firebaseConfig2, 'secondApp'); // Second app with a different name
 }
 
-const auth = firebase.auth()
+// Initialize auth for the default app
+const auth1 = firebase.auth(); // Auth for the first app
 
-export { auth }
+// Initialize auth for the second app
+const auth2 = firebase.app('secondApp').auth(); // Auth for the second app
+
+// Access Realtime Database from both apps
+const db1 = firebase.database(); // First Realtime Database
+const db2 = firebase.database(firebase.app('secondApp')); // Second Realtime Database
+
+export { auth1, auth2, db1, db2 };

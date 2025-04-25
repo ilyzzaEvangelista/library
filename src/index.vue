@@ -5,38 +5,47 @@
             <AppBar @scrollToContact="scrollToContact" @scrollToHome="scrollToHome" @scrollToCertificates="scrollToCertificates" />
 
             <v-container fluid style="background: #ffffff;">
-                <v-row v-if="!selectedProject" ref="homeSection" align="center">
-                    <v-col cols="12" md="6">
-                        <div class="d-flex flex-column align-start ml-16 pl-10 pt-10">
+                <!-- Intro Section -->
+                <v-row v-if="!selectedProject" style="margin-top: 100px; column-gap: 5px;" ref="homeSection" align="center" justify="center">
+                    <!-- Text Content -->
+                    <v-col cols="12" md="5" class="px-6 py-10">
+                        <div class="d-flex flex-column align-start align-md-start align-sm-center text-sm-center">
                             <h1 class="black--text display-2 font-weight-bold">Hi <span>👋</span>,</h1>
                             <h1 class="black--text display-2 font-weight-bold">I’m Ilyzza,</h1>
-                            <h2 class="primary--text" style="font-size: 50px; font-weight: 600;">Front-end Developer</h2>
-
+                            <h2 class="primary--text font-weight-semibold" style="font-size: 40px;">Front-end Developer</h2>
+            
                             <p class="black--text subtitle-1 mt-4">
-                                I design and develop experiences that make people's lives<br />
-                                simpler through Web and Mobile apps. I work with HTML5,<br />
+                                I design and develop experiences that make people's lives
+                                simpler through Web and Mobile apps. I work with HTML5,
                                 CSS3, JavaScript, Vue, Vuetify, and Bootstrap.
                             </p>
-
+            
                             <div class="mt-6">
-                                <v-btn @click="scrollToProject" class="text-capitalized" color="black" outlined>See My Projects</v-btn>
+                                <v-btn @click="scrollToProject" class="text-capitalize" color="black" outlined>
+                                    See My Projects
+                                </v-btn>
                             </div>
                         </div>
                     </v-col>
-                    <v-col cols="12" md="5" class="mt-10">
-                        <v-img :src="require('@/assets/landing/profile.jpg')" alt="Charles working" class="mt-10" aspect-ratio="1"></v-img>
+            
+                    <!-- Image Section -->
+                    <v-col cols="12" md="5" class="text-center mt-6 mt-md-10">
+                        <v-img :src="require('@/assets/landing/profile.jpg')" alt="Ilyzza working" aspect-ratio="1" max-width="400" class="mx-auto"></v-img>
                     </v-col>
                 </v-row>
-
+            
+                <!-- Project & Others -->
                 <v-row>
                     <v-col cols="12">
                         <ProjectList ref="projectSection" :setSelectedProject="setSelectedProject" />
-                        <!-- Hide these sections when a project is selected -->
+            
+                        <!-- Conditional Sections -->
                         <CertificatesList v-if="!selectedProject" ref="certificateSection" />
                         <ContactMe v-if="!selectedProject" ref="contactSection" />
                     </v-col>
                 </v-row>
             </v-container>
+            
         </v-app>
     </div>
 </template>

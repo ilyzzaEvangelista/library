@@ -10,7 +10,7 @@
                     </template>
                 </v-breadcrumbs>
                 <v-row v-if="!selectedProject" class="ml-2">
-                    <v-col v-for="project in projects" :key="project.id" cols="12" md="3">
+                    <v-col v-for="project in projects" :key="project.id" cols="12" md="4">
                         <v-card @click="selectProject(project)" class="full-card">
                             <v-img :src="project.image" class="project-image mt-10" contain elevation-1 />
                             <v-card-title class="project-title">{{ project.name }}</v-card-title>
@@ -39,7 +39,7 @@
                     {
                         id: 1,
                         name: "Library",
-                        description: "A library built with Vue and Vuetify. This allows the user to search, add, edit, and remove books.",
+                        description: "A library built with Vue + Vuetify for Frontend and Laravel for backend. This system allows the user to search, add, edit, and remove books. ",
                         image: "https://cdn-icons-png.flaticon.com/512/10278/10278270.png",
                     },
                     {

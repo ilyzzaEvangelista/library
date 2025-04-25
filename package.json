@@ -2,7 +2,7 @@
   "name": "lay-projects",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ilyzzaEvangelista.github.io/library",
+  "homepage": "https://github.com/ilyzzaEvangelista/projects",
   "scripts": {
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",

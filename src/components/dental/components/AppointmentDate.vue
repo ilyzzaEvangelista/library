@@ -1,10 +1,7 @@
 <template>
     <div>
-        <!-- Services Button -->
-        <v-btn text @click="openDialog">Dates</v-btn>
-
         <!-- Dialog to show services -->
-        <v-dialog v-model="modal" max-width="1000px">
+        <v-dialog v-model="dialog" max-width="1000px">
             <v-card class="elevation-0">
                 <v-card-title class="pa-0">
                     <v-toolbar class="elevation-0">
@@ -67,7 +64,7 @@
     export default {
         data() {
             return {
-                modal: false,
+                dialog: true,
                 selectedDate: new Date(),
                 calendarEvents: [],
                 loading: false,
@@ -88,10 +85,11 @@
         methods: {
             openDialog() {
                 this.fetchAppointment();
-                this.modal = true;
+                this.dialog = true;
             },
             cancelDialog() {
-                this.modal = false;
+                this.dialog = false;
+                this.$emit('appointmentDateBtn');
             },
             fetchAppointment() {
                 this.loading = true;
