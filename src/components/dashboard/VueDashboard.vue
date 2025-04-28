@@ -185,7 +185,6 @@
         align-items: center;
     }
     .dashboard-container {
-        background: linear-gradient(135deg, #f7f7f7, #ffffff);
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         padding: 20px;
         border-radius: 12px;
