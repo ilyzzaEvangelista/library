@@ -1,83 +1,85 @@
 <template>
-    <v-container fluid class="fill-height" style="background: #ffffff;">
-        <v-app-bar app color="primary" dark>
-            <v-toolbar-title>LIST OF BOOKS</v-toolbar-title>
-        </v-app-bar>
+    <div>
+        <v-app>
+            <v-app-bar app color="primary" dark>
+                <v-toolbar-title>LIST OF BOOKS</v-toolbar-title>
+            </v-app-bar>
 
-        <v-container fluid class="book-list mb-5">
-            <div class="d-flex justify-center align-center pa-5">
-                <h1 >My Literary Journey</h1>
-            </div>
-            <v-row>
-                <v-col cols="4">
-                    <v-text-field v-model="searchTerm" class="mb-5" label="Search Books" append-icon="mdi-magnify" single-line hide-details outlined dense />
-                </v-col>
-                <v-col cols="8">
-                    <CompCreate :book="selectedBook" @book-added="handleBookAdded" />
-                </v-col>
-            </v-row>
-            <v-data-table :headers="headers" :items="paginatedBooks" :loading="loading" item-value="title" class="elevation-1" hide-default-footer>
-                <template v-slot:[`item.image`]="{ item }">
-                    <v-btn class="text-capitalized" small v-if="item.image" text @click="viewImage(item.image)">
-                        View Image
-                    </v-btn>
-                </template>
-
-                <template v-slot:[`item.title`]="{ item }"> <strong>{{ item.title }}</strong> by {{ item.author }} </template>
-
-                <template v-slot:[`item.description`]="{ item }">
-                    <span class="truncate-text" :title="item.description">
-                        {{ item.description }}
-                    </span>
-                </template>
-
-                <template v-slot:[`item.actions`]="{ item }">
-                    <div class="d-flex justify-center align-center">
-                        <CompCreate :book="item" @book-updated="handleBookUpdated" />
-                        <v-btn small color="#B71C1C" class="mx-2 text-capitalized" style="color: white;" @click="removeBook(item)">
-                            {{ formattedLabels.delete }}
-                        </v-btn>
-                    </div>
-                </template>
-            </v-data-table>
-
-            <v-pagination v-model="page" :length="pageCount" color="#1A237E" class="mt-4"></v-pagination>
-
-            <v-dialog v-model="imageDialog" max-width="400px">
-                <v-card>
-                    <v-card-title class="pa-0">
-                        <v-toolbar class="elevation-0">
-                            <v-spacer></v-spacer>
-                            <v-card-title>Book Cover</v-card-title>
-                            <v-spacer></v-spacer>
-                            <v-toolbar-items>
-                                <v-btn icon @click="imageDialog = false">
-                                    <v-icon>mdi-close</v-icon>
-                                </v-btn>
-                            </v-toolbar-items>
-                        </v-toolbar>
-                    </v-card-title>
-                    <hr />
-                    <v-card-text class="text-center mt-5">
-                        <v-img :src="selectedImage" max-width="100%"></v-img>
-                    </v-card-text>
-                </v-card>
-            </v-dialog>
-
-            <v-footer app style="background: #ffffff;">
+            <v-container fluid>
+                <div class="d-flex justify-center align-center pa-5">
+                    <h1 >My Literary Journey</h1>
+                </div>
                 <v-row>
-                    <v-col class="text-center" cols="12">
-                        <v-icon>mdi-facebook</v-icon>
-                        <v-icon>mdi-instagram</v-icon>
-                        <v-icon>mdi-twitter</v-icon>
+                    <v-col cols="4">
+                        <v-text-field v-model="searchTerm" class="mb-5" label="Search Books" append-icon="mdi-magnify" single-line hide-details outlined dense />
                     </v-col>
-                    <v-col class="text-center" cols="12">
-                        <span>&copy; 2025 Your Company. All rights reserved.</span>
+                    <v-col cols="8">
+                        <CompCreate :book="selectedBook" @book-added="handleBookAdded" />
                     </v-col>
                 </v-row>
-            </v-footer>
-        </v-container>
-    </v-container>
+                <v-data-table :headers="headers" :items="paginatedBooks" :loading="loading" item-value="title" class="elevation-1" hide-default-footer>
+                    <template v-slot:[`item.image`]="{ item }">
+                        <v-btn class="text-capitalized" small v-if="item.image" text @click="viewImage(item.image)">
+                            View Image
+                        </v-btn>
+                    </template>
+
+                    <template v-slot:[`item.title`]="{ item }"> <strong>{{ item.title }}</strong> by {{ item.author }} </template>
+
+                    <template v-slot:[`item.description`]="{ item }">
+                        <span class="truncate-text" :title="item.description">
+                            {{ item.description }}
+                        </span>
+                    </template>
+
+                    <template v-slot:[`item.actions`]="{ item }">
+                        <div class="d-flex justify-center align-center">
+                            <CompCreate :book="item" @book-updated="handleBookUpdated" />
+                            <v-btn small color="#B71C1C" class="mx-2 text-capitalized" style="color: white;" @click="removeBook(item)">
+                                {{ formattedLabels.delete }}
+                            </v-btn>
+                        </div>
+                    </template>
+                </v-data-table>
+
+                <v-pagination v-model="page" :length="pageCount" color="#1A237E" class="mt-4"></v-pagination>
+                <v-footer app style="background: #ffffff;">
+                    <v-row>
+                        <v-col class="text-center" cols="12">
+                            <v-icon>mdi-facebook</v-icon>
+                            <v-icon>mdi-instagram</v-icon>
+                            <v-icon>mdi-twitter</v-icon>
+                        </v-col>
+                        <v-col class="text-center" cols="12">
+                            <span>&copy; 2025 Your Company. All rights reserved.</span>
+                        </v-col>
+                    </v-row>
+                </v-footer>
+            </v-container>
+
+        </v-app>
+
+        <v-dialog v-model="imageDialog" max-width="400px">
+            <v-card>
+                <v-card-title class="pa-0">
+                    <v-toolbar class="elevation-0">
+                        <v-spacer></v-spacer>
+                        <v-card-title>Book Cover</v-card-title>
+                        <v-spacer></v-spacer>
+                        <v-toolbar-items>
+                            <v-btn icon @click="imageDialog = false">
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                        </v-toolbar-items>
+                    </v-toolbar>
+                </v-card-title>
+                <hr />
+                <v-card-text class="text-center mt-5">
+                    <v-img :src="selectedImage" max-width="100%"></v-img>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+    </div>
 </template>
 
 <script>
@@ -234,7 +236,9 @@
 
 <style scoped>
     #app {
-        color: #ffffff;
+        background-color: #ffffff;
+        color: #000000;
+        
     }
 
     .text-capitalized {
